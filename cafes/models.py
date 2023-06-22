@@ -16,6 +16,8 @@ class Cafe(CommonModel):
     owner = models.ForeignKey(
         "users.User",
         on_delete=models.CASCADE,
+        null=True,
+        blank=True,
     )
     name = models.CharField(
         max_length=50,
