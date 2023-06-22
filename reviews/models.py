@@ -8,4 +8,4 @@ class Reviews(CommonModel):
         "users.User",
         on_delete=models.CASCADE,
     )
-    content = models.TextField()
+    content = models.CharField()
