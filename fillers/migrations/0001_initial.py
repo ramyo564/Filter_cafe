@@ -6,13 +6,11 @@ from django.db import migrations, models
 class Migration(migrations.Migration):
     initial = True
 
-    dependencies = [
-        ("fillers", "0001_initial"),
-    ]
+    dependencies = []
 
     operations = [
         migrations.CreateModel(
-            name="Review",
+            name="Filler",
             fields=[
                 (
                     "id",
@@ -25,13 +23,7 @@ class Migration(migrations.Migration):
                 ),
                 ("created_at", models.DateTimeField(auto_now_add=True)),
                 ("updated_at", models.DateTimeField(auto_now=True)),
-                ("content", models.CharField(max_length=200)),
-                (
-                    "filler",
-                    models.ManyToManyField(
-                        related_name="filler_reviews", to="fillers.filler"
-                    ),
-                ),
+                ("filler_name", models.CharField(max_length=50, unique=True)),
             ],
             options={
                 "abstract": False,

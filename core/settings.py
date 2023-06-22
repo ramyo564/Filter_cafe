@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "cafes",
     "reviews",
     "users",
+    "fillers",
 ]
 
 MIDDLEWARE = [
