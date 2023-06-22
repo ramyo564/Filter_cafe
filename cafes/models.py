@@ -9,7 +9,7 @@ class Cafe(CommonModel):
         BUSAN = ("부산", "부산")
         INCHEON = ("인천", "인천")
 
-    kind = models.CharField(
+    city = models.CharField(
         max_length=20,
         choices=CityChoices.choices,
     )

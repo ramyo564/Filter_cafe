@@ -4,6 +4,8 @@ from django.shortcuts import render
 # Create your views here.
 def index(request):
     """
+    하위 디렉토리(subdirectory)로 도시 이름
+
     쿼리 매개 변수로 필터링 조건과 페이지 정보가 들어옴.
 
     필터링 후 페이지에 맞는 최대 20개씩 카페 목록을 출력
