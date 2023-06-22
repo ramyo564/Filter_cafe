@@ -8,3 +8,8 @@ class Review(CommonModel):
         on_delete=models.CASCADE,
     )
     content = models.TextField()
+    cafe = models.ForeignKey(
+        "cafes.Cafe",
+        on_delete=models.CASCADE,
+        related_name="cafe_reviews",
+    )

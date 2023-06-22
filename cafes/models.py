@@ -18,5 +18,5 @@ class Cafe(CommonModel):
     )
     filler = models.ManyToManyField(
         "fillers.Filler",
-        related_name="filler_reviews",
+        related_name="filler_cafes",
     )
