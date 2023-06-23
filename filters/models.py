@@ -9,9 +9,9 @@ class City(models.Model):
         return self.name
 
 
-class Filler(models.Model):
-    name = models.CharField(max_length=50, unique=True)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
+class Filter(models.Model):
+    name = models.CharField(max_length=50)
+    city = models.ForeignKey("City", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -19,7 +19,7 @@ class Filler(models.Model):
 
 class Option(models.Model):
     name = models.CharField(max_length=50)
-    filter = models.ForeignKey(Filler, on_delete=models.CASCADE)
+    filter = models.ForeignKey("Filter", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
