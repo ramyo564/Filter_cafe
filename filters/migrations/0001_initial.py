@@ -11,7 +11,7 @@ class Migration(migrations.Migration):
 
     operations = [
         migrations.CreateModel(
-            name="Cafe",
+            name="City",
             fields=[
                 (
                     "id",
@@ -22,15 +22,11 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("name", models.CharField(max_length=20)),
-                ("address", models.CharField(max_length=100)),
-                ("business_hours", models.CharField(max_length=100)),
-                ("img", models.URLField()),
-                ("map", models.URLField()),
+                ("name", models.CharField(max_length=50)),
             ],
         ),
         migrations.CreateModel(
-            name="Review",
+            name="Filler",
             fields=[
                 (
                     "id",
@@ -41,12 +37,32 @@ class Migration(migrations.Migration):
                         verbose_name="ID",
                     ),
                 ),
-                ("rating", models.IntegerField()),
-                ("reviews", models.TextField()),
+                ("name", models.CharField(max_length=50, unique=True)),
                 (
-                    "cafe",
+                    "city",
                     models.ForeignKey(
-                        on_delete=django.db.models.deletion.CASCADE, to="cafes.cafe"
+                        on_delete=django.db.models.deletion.CASCADE, to="filters.city"
+                    ),
+                ),
+            ],
+        ),
+        migrations.CreateModel(
+            name="Option",
+            fields=[
+                (
+                    "id",
+                    models.BigAutoField(
+                        auto_created=True,
+                        primary_key=True,
+                        serialize=False,
+                        verbose_name="ID",
+                    ),
+                ),
+                ("name", models.CharField(max_length=50)),
+                (
+                    "filter",
+                    models.ForeignKey(
+                        on_delete=django.db.models.deletion.CASCADE, to="filters.filler"
                     ),
                 ),
             ],
