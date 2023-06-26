@@ -2,12 +2,16 @@ from django.db import models
 
 
 class Cafe(models.Model):
-    class CityChoices(models.TextChoices):
-        SEOUL = ("서울", "서울")
-        INCHEON = ("인천", "인천")
-        BUSAN = ("부산", "부산")
+    CityChoices = [
+        ("서울", "서울"),
+        ("인천", "인천"),
+        ("부산", "부산"),
+    ]
 
-    city = models.CharField(choices=CityChoices, max_length=20)
+    city = models.CharField(
+        max_length=20,
+        choices=CityChoices,
+    )
 
     name = models.CharField(max_length=20)
     address = models.CharField(max_length=100)
