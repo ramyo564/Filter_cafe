@@ -58,6 +58,7 @@ def create_cafe_adress(request):
     post:
     정보를 바탕으로 카페를 생성한다.
     slug를 활용하여 이름으로 주소창을 생성한다.
+    해당 Cafe의 Filter랑 FilterScore에 맞게 BallotBox를 생성해야 한다.
 
 
     리다이렉트
@@ -72,10 +73,11 @@ def cafe_edit(request, cafe_slug):
     get:
     로그인 한 유저만 볼 수 있음
     페이지를 하드 코딩으로 작성할 생각(좋아요는 100점, 보통은 50점, 싫어요는 0점)
-    유저가 투표를 했는지 각 필터링에 대하여 알려줘야 한다.
+    유저가 투표를 했는지 BallotBox를 확인하여 알려줘야 한다.
     ex) wifi No 선택하면 wifi: 0 으로 와야 된다.
     put:
     요청시 로그인을 안했으면 status 403
+    BallotBox를 해당 유저의 기존의 정보를 지우고 바뀐 정보를 입력(설명이 애매하여 테스트 코드 참고해야 됨.)
 
 
     """
@@ -83,42 +85,9 @@ def cafe_edit(request, cafe_slug):
     pass
 
 
-def create(request):
+def cafe_delete(request, cafe_pk):
     """
-    로그인 했을 때만 가능
-
-    POST요청만 가능
-
-    데이터 파싱(post를 통해 온 데이터 사용할 수 있게 변환) 후
-    name, filler, address 정보 입력
-
-    owner는 토의 후 재수정 필요
-
-    카페 생성
-
-    렌더 해당 카페 페이지
-    """
-    pass
-
-
-def put(request, cafe_pk):
-    """
-    로그인 유저인지 검사
-
-    put 요청인지 확인(put은 수정할 때 주로 보내는 요청. POST랑 비슷하지만 구분해서 사용함.)
-
-    cafe_pk가 있는지 검사
-
-    데이터 파싱 후 내용 수정.
-
-    리다일렉트 해당 카페 페이지
-    """
-    pass
-
-
-def delete(request, cafe_pk):
-    """
-    로그인 유저인지 검사
+    검사??? 어떻게 해야지 못정함.
 
     delete요청인지 확인
 
@@ -128,24 +97,6 @@ def delete(request, cafe_pk):
 
     (이때 데이터를 복구가능하게 할지 아니면 그냥 영구 삭제할지)
 
-    리다일렉트 해당 카페 페이지
-    """
-    pass
-
-
-def like(request, cafe_pk):
-    """
-    로그인 유저인지 검사
-
-    cafe_pk가 있는지 검사
-
-    해당 유저(request.user)가 해당 카페(cafe_pk)에 좋아요 눌렸는지 여부
-
-    눌렸으면 like사라지고
-
-    안 눌렸으면 like생성.
-
-    비동기처리
-    return JsonResponse(context)
+    리다일렉트 city_cafes
     """
     pass
