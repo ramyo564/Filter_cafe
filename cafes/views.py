@@ -69,9 +69,12 @@ def cafe_edit(request, cafe_slug):
     """
     get과 put로 구분
     get:
-    하드 코딩으로 작성할 생각
+    로그인 한 유저만 볼 수 있음
+    페이지를 하드 코딩으로 작성할 생각(좋아요는 100점, 보통은 50점, 싫어요는 0점)
+    ex) wifi No 선택하면 wifi: 0 으로 와야 된다. 
     put:
-
+    요청시 로그인을 안했으면 status 403
+    
     """
 
     pass
