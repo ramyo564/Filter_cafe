@@ -1,4 +1,5 @@
-from django.shortcuts import render
+from rest_framework.response import Response
+from rest_framework.views import APIView
 
 
 # Create your views here.
@@ -11,29 +12,32 @@ def index(request):
     pass
 
 
-def city_cafes(request, city):
-    """
-    get으로 불러올 때랑 post로 불러 올때랑 구분해야 됨.
+class CityCafes(APIView):
+    def get(request, city):
+        """
+        도시에 해당하는 카페들이 나와야 됨.(status 200)
+        카페가 2개가 있다면 2개가 출력되어야 됨.
+        페이지네이션(이건 테스트 코드 아직 추가X, 논의 필요)
+        """
+        pass
 
-    get으로 불러 올때:
-    도시에 해당하는 카페들이 나와야 됨.
+    def post(request, city):
+        """
+        post로 불러올때:
+        1 단계:
+        도시에 해당하는 카페들이 필터링 정보에 따라 나와야 됨.
+        필터링 정보는 request.post.getlist("filters")를 통해서 전달이 됩니다.
+        적용된 필터링 내용 알 수 있어야 합니다.
 
-    post로 불러올때:
-    1 단계:
-    도시에 해당하는 카페들이 필터링 정보에 따라 나와야 됨.
-    필터링 정보는 request.post.getlist("filters")를 통해서 전달이 됩니다.
-    적용된 필터링 내용 알 수 있어야 합니다.
+        2 단계: 아마 여기까지는 리액트 사용 안하고는 힘들거 같긴 합니다.
+        비동기를 통해서 구현해야 합니다.
+        이때 필터링 내용이 추가 될 때마다 필터링 색이 변해야 합니다.(토글 사용)
 
-    2 단계: 아마 여기까지는 리액트 사용 안하고는 힘들거 같긴 합니다.
-    비동기를 통해서 구현해야 합니다.
-    이때 필터링 내용이 추가 될 때마다 필터링 색이 변해야 합니다.(토글 사용)
+        ex) ["wifi", "sockets", "alcohol]
 
-    ex) ["wifi", "sockets", "alcohol]
-
-    항상: 총 카페 갯수 전달이 되어야 합니다.
-
-    """
-    pass
+        항상: 총 카페 갯수 전달이 되어야 합니다.(이 부분은 프론트와 상의를 해야 한다. )
+        """
+        pass
 
 
 # ALL CITIES
