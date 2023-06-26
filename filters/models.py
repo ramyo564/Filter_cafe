@@ -4,11 +4,11 @@ from django.db import models
 
 
 class Filter(models.Model):
-    class OptionChoices(models.TextChoices):
-        PRODUCTIVITY = ("productivity", "Productivity")
-        COMMUNITY = ("community", "Community")
-        SERVICE = ("service", "Service")
-        # ...
+    OptionChoices = [
+        ("productivity", "Productivity"),
+        ("community", "Community"),
+        ("service", "Service"),
+    ]
 
     option = models.CharField(choices=OptionChoices, max_length=20)
 
