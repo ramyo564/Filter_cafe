@@ -75,6 +75,7 @@ def cafe_edit(request, cafe_slug):
     put:
     요청시 로그인을 안했으면 status 403
     
+    
     """
 
     pass
