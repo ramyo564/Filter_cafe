@@ -53,10 +53,9 @@ class TestCityCafesGet(APITestCase):
 
 
 """
+CityList
+class TestCityListGet(APITestCase):
+    URL = "/api/v1/cities"
+    pass
 
 """
-
-
-class TestCityCafesGet(APITestCase):
-    URL = "/api/v1/"
-    pass
