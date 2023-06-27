@@ -13,6 +13,7 @@ class Filter(models.Model):
     option = models.CharField(choices=OptionChoices, max_length=20)
 
     name = models.CharField(max_length=50)
+    img = models.URLField(max_length=200)
 
     def __str__(self):
         return self.name

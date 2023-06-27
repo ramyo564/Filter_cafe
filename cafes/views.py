@@ -1,6 +1,8 @@
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from .models import Cafe
+
 
 # Create your views here.
 def index(request):
@@ -41,34 +43,40 @@ class CityCafes(APIView):
 
 
 # ALL CITIES
-def city_list(request):
-    """
-    도시 목록이 보여야 한다.
-    """
+# 테코 0626 현재 X(넘김)
+class CityList(APIView):
+    def get(request):
+        """
+        도시 목록이 보여야 한다.
+        for city in Cafe.CityChoices
+            print(city[0])
+        이게 되나 확인. 안되면 하드 코딩 혹은 상의
+        """
 
 
 # SUGGEST PLACES
-def create_cafe_adress(request):
-    """
-    get과 POST로 구분
-    get:
-    로그인 유저만 올 수 있음.(비로그인 유저는 회원가입 창으로)
-    주소 입력창을 보여준다.
-    주소 입력창에 정보가 들어오면 거기에 해당하는 위치를 보여준다.
-    주소 관련 사진을 선택한다. (이건 구글 API를 활용해야 할 거 같다.)
-    이름 입력창
+class CreateCafe(APIView):
+    def get(request):
+        """
+        get과 POST로 구분
+        get:
+        로그인 유저만 올 수 있음.(비로그인 유저는 회원가입 창으로)
+        주소 입력창을 보여준다.
+        주소 입력창에 정보가 들어오면 거기에 해당하는 위치를 보여준다.
+        주소 관련 사진을 선택한다. (이건 구글 API를 활용해야 할 거 같다.)
+        이름 입력창
 
 
-    post:
-    정보를 바탕으로 카페를 생성한다.
-    slug를 활용하여 이름으로 주소창을 생성한다.
-    해당 Cafe의 Filter랑 FilterScore에 맞게 BallotBox를 생성해야 한다.
+        post:
+        정보를 바탕으로 카페를 생성한다.
+        slug를 활용하여 이름으로 주소창을 생성한다.
+        해당 Cafe의 Filter랑 FilterScore에 맞게 BallotBox를 생성해야 한다.
 
 
-    리다이렉트
-    해당 카페 필터링 조건을 보여준다.(필터링 편집 페이지로 이동)
+        리다이렉트
+        해당 카페 필터링 조건을 보여준다.(필터링 편집 페이지로 이동)
 
-    """
+        """
 
 
 def cafe_edit(request, cafe_slug):
