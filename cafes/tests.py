@@ -1,6 +1,7 @@
 from rest_framework.test import APITestCase
 
 from cafes.models import Cafe
+from filters.models import Filter
 
 """
 get
@@ -34,7 +35,7 @@ class TestCityCafesGet(APITestCase):
         cafe2.save()
 
     def test_CityCafesGet_1(self):
-        response = self.client.get(self.URL + "seoul")
+        response = self.client.get(self.URL + "서울")
         self.assertEqual(
             response.status_code,
             200,
@@ -42,13 +43,85 @@ class TestCityCafesGet(APITestCase):
         )
 
     def test_CityCafesGet_2(self):
-        response = self.client.get(self.URL + "seoul")
+        response = self.client.get(self.URL + "서울")
         data = response.json()
 
         self.assertEqual(
             len(data),
             2,
             "CityCafes 출력 갯수가 잘못되었습니다.",
+        )
+
+
+class TestCityCafesPost(APITestCase):
+    URL = "/api/v1/"
+
+    def setUp(self):
+        cafe1 = Cafe.objects.create(
+            city="서울",
+            name="test cafe 1",
+            address="test cafe address",
+            business_hours="test cafe business_hours",
+            img="test cafe img",
+            map="test cafe map",
+        )
+        cafe2 = Cafe.objects.create(
+            city="서울",
+            name="test cafe 2",
+            address="test cafe address",
+            business_hours="test cafe business_hours",
+            img="test cafe img",
+            map="test cafe map",
+        )
+        cafe1.save()
+        cafe2.save()
+        filter1 = Filter.objects.create(
+            option="option1",
+            name="wifi1",
+            img="img1",
+        )
+        filter2 = Filter.objects.create(
+            option="option2",
+            name="wifi2",
+            img="img2",
+        )
+        filter3 = Filter.objects.create(
+            option="option3",
+            name="wifi3",
+            img="img3",
+        )
+        filter1.save()
+        filter2.save()
+        filter3.save()
+        self.filter1 = filter1
+        self.filter2 = filter2
+        self.filter3 = filter3
+
+    def test_city_cafes_post_1(self):
+        response = self.client.post(
+            self.URL + "서울",
+            data={
+                "filters": [self.filter1, self.filter2],
+            },
+        )
+        self.assertEqual(
+            response.status_code,
+            200,
+            "status code isn't 200.",
+        )
+
+    def test_city_cafes_post_2(self):
+        response = self.client.post(
+            self.URL + "서울",
+            data={
+                "filters": [self.filter1, self.filter2],
+            },
+        )
+        data = response.json()
+        self.assertEqual(
+            data,
+            [self.filter1, self.filter2],
+            "filter정보가 전달이 안되었습니다. ",
         )
 
 
