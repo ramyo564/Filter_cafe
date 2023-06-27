@@ -35,7 +35,7 @@ class CityCafes(APIView):
         비동기를 통해서 구현해야 합니다.
         이때 필터링 내용이 추가 될 때마다 필터링 색이 변해야 합니다.(토글 사용)
 
-        ex) ["wifi", "sockets", "alcohol]
+        ex) ["wifi", "sockets", "alcohol"]
 
         항상: 총 카페 갯수 전달이 되어야 합니다.(이 부분은 프론트와 상의를 해야 한다. )
         """
