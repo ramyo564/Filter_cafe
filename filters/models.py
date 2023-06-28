@@ -42,4 +42,6 @@ class BallotBox(models.Model):
     users = models.ManyToManyField(
         "users.User",
         related_name="ballot_boxs",
+        blank=True,
+        null=True,
     )
