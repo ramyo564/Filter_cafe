@@ -76,13 +76,17 @@ class CityCafes(APIView):
 # ALL CITIES
 # 테코 0626 현재 X(넘김)
 class CityList(APIView):
-    def get(request):
+    def get(self, request):
         """
         도시 목록이 보여야 한다.
         for city in Cafe.CityChoices
             print(city[0])
         이게 되나 확인. 안되면 하드 코딩 혹은 상의
         """
+        cities = []
+        for city in Cafe.CityChoices:
+            cities.append(city[0])
+        return Response(cities, status.HTTP_200_OK)
 
 
 # SUGGEST PLACES
