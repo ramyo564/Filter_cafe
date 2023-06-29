@@ -150,6 +150,30 @@ class TestCityCafesPost(APITestCase):
             "status code isn't 200.",
         )
 
+
+class TestCityList(APITestCase):
+    URL = "/api/v1/cities"
+
+    def test_city_list_1(self):
+        response = self.client.get(self.URL)
+        self.assertEqual(
+            response.status_code,
+            200,
+            "status code isn't 200.",
+        )
+
+    # 도시 출력 갯수가 맞는지 확인을 해야 하지만,
+    # 도시수를 OptionChoices로 정하는 관계로
+    # 테스트가 어려워서 따로 안만듬.
+    def test_city_list_2(self):
+        response = self.client.get(self.URL)
+        data = response.json()
+        self.assertEqual(
+            type(data),
+            type([]),
+            "cities에 문제가 없는지 확인해 주세요.",
+        )
+
     # 이게 왜 에러인지 모르겠어 가지고 주석처리
     # def test_city_cafes_post_2(self):
     #     response = self.client.post(
