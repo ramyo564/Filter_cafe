@@ -1,10 +1,14 @@
+from django.db import transaction
 from rest_framework import status
 from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from filters.models import BallotBox, Filter, FilterScore
+from filters.serializers import BallotBoxSerializer
+
 from .models import Cafe
-from .serializers import CityCafesSerializer
+from .serializers import CafesSerializer
 
 
 # Create your views here.
@@ -25,7 +29,7 @@ class CityCafes(APIView):
         페이지네이션(이건 테스트 코드 아직 추가X, 논의 필요)
         """
         cafes = Cafe.objects.filter(city=city)
-        serializer = CityCafesSerializer(cafes, many=True)
+        serializer = CafesSerializer(cafes, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
     def post(self, request, city):
@@ -69,7 +73,8 @@ class CityCafes(APIView):
                     break
             else:
                 answer.append(c)
-        serializer = CityCafesSerializer(answer, many=True)
+        # ! serializer.data가 리스트로 되어있다. 주의!
+        serializer = CafesSerializer(answer, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
 
 
@@ -91,27 +96,48 @@ class CityList(APIView):
 
 # SUGGEST PLACES
 class CreateCafe(APIView):
-    def get(request):
+    def get(self, request):
         """
-        get과 POST로 구분
         get:
         로그인 유저만 올 수 있음.(비로그인 유저는 회원가입 창으로)
         주소 입력창을 보여준다.
         주소 입력창에 정보가 들어오면 거기에 해당하는 위치를 보여준다.
         주소 관련 사진을 선택한다. (이건 구글 API를 활용해야 할 거 같다.)
         이름 입력창
+        => 화면 설계가 나오면 구체화
+        """
 
-
+    @transaction.atomic(using="default")
+    def post(self, request):
+        """
         post:
         정보를 바탕으로 카페를 생성한다.
         slug를 활용하여 이름으로 주소창을 생성한다.
         해당 Cafe의 Filter랑 FilterScore에 맞게 BallotBox를 생성해야 한다.
-
-
-        리다이렉트
-        해당 카페 필터링 조건을 보여준다.(필터링 편집 페이지로 이동)
-
         """
+        try:
+            with transaction.atomic():
+                cafeSerializer = CafesSerializer(data=request.data)
+                if cafeSerializer.is_valid():
+                    cafe = cafeSerializer.save()
+                    # BallotBox 생성
+                    all_filter = Filter.objects.all()
+                    all_score = FilterScore.objects.all()
+                    for f in all_filter:
+                        for s in all_score:
+                            BallotBox.objects.create(
+                                cafe=cafe,
+                                filter=f,
+                                score=s,
+                            )
+                    return Response(
+                        {"ok": "ok"},
+                        status=status.HTTP_201_CREATED,
+                    )
+
+        except:
+            pass
+        return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 def cafe_edit(request, cafe_slug):

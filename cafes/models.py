@@ -16,7 +16,6 @@ class Cafe(models.Model):
     address = models.CharField(max_length=100)
     business_hours = models.CharField(max_length=100)
     img = models.URLField(max_length=200)  # 사진은 한장인가?
-    map = models.URLField(max_length=200)
 
     def __str__(self):
         return self.name
