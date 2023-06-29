@@ -22,7 +22,6 @@ class TestCityCafesGet(APITestCase):
             address="test cafe address",
             business_hours="test cafe business_hours",
             img="test cafe img",
-            map="test cafe map",
         )
         cafe2 = Cafe.objects.create(
             city="서울",
@@ -30,7 +29,6 @@ class TestCityCafesGet(APITestCase):
             address="test cafe address",
             business_hours="test cafe business_hours",
             img="test cafe img",
-            map="test cafe map",
         )
         cafe1.save()
         cafe2.save()
@@ -75,7 +73,6 @@ class TestCityCafesPost(APITestCase):
             address="test cafe address",
             business_hours="test cafe business_hours",
             img="test cafe img",
-            map="test cafe map",
         )
         cafe2 = Cafe.objects.create(
             city="서울",
@@ -83,7 +80,6 @@ class TestCityCafesPost(APITestCase):
             address="test cafe address",
             business_hours="test cafe business_hours",
             img="test cafe img",
-            map="test cafe map",
         )
         cafe1.save()
         self.cafe1 = cafe1
@@ -150,6 +146,28 @@ class TestCityCafesPost(APITestCase):
             "status code isn't 200.",
         )
 
+    def test_city_cafes_post_2(self):
+        response = self.client.post(
+            self.URL + "서울",
+            data={
+                "filters": [self.filter1, self.filter2],
+            },
+        )
+        data = response.json()
+        self.assertEqual(
+            data,
+            [
+                {
+                    "pk": 1,
+                    "name": "test cafe 1",
+                    "city": "서울",
+                    "address": "test cafe address",
+                    "business_hours": "test cafe business_hours",
+                }
+            ],
+            "status code isn't 200.",
+        )
+
 
 class TestCityList(APITestCase):
     URL = "/api/v1/cities"
@@ -174,31 +192,38 @@ class TestCityList(APITestCase):
             "cities에 문제가 없는지 확인해 주세요.",
         )
 
-    # 이게 왜 에러인지 모르겠어 가지고 주석처리
-    # def test_city_cafes_post_2(self):
-    #     response = self.client.post(
-    #         self.URL + "서울",
-    #         data={
-    #             "filters": [self.filter1, self.filter2],
-    #         },
-    #     )
-    #     data = response.json()
-    #     print(data)
-    #     self.assertEqual(
-    #         data,
-    #         self.cafe1,
-    #         "필터링이 제대로 되지 않았습니다. ",
-    #     )
 
+class TestCreateCafe(APITestCase):
+    URL = "/api/v1/create"
 
-"""
-CityList
-class TestCityListGet(APITestCase):
-    URL = "/api/v1/cities"
-    pass
+    def setUp(self):
+        Filter.objects.create(
+            option="option1",
+            name="wifi1",
+            img="img1",
+        )
+        Filter.objects.create(
+            option="option2",
+            name="wifi2",
+            img="img2",
+        )
+        filterscore100 = FilterScore.objects.create(score=100)
+        filterscore30 = FilterScore.objects.create(score=30)
+        filterscore100.save()
+        filterscore30.save()
 
-"""
-
-"""
-test
-"""
+    def test_create_cafe(self):
+        response = self.client.post(
+            self.URL,
+            data={
+                "name": "cafe 1",
+                "city": "서울",
+                "address": "address 1",
+                "business_hours": "9~12",
+            },
+        )
+        self.assertEqual(
+            response.status_code,
+            201,
+            "status code isn't 201.",
+        )
