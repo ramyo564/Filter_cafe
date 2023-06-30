@@ -211,7 +211,16 @@ class TestCreateCafe(APITestCase):
         filterscore30 = FilterScore.objects.create(score=30)
         filterscore100.save()
         filterscore30.save()
+        user1 = User.objects.create(
+            username="testuser",
+        )
+        user1.set_password("123")
+        user1.save()
+        self.client.force_login(
+            user1,
+        )
 
+    # ! 테스트 코드가 너무 적음.
     def test_create_cafe(self):
         response = self.client.post(
             self.URL,
@@ -227,3 +236,180 @@ class TestCreateCafe(APITestCase):
             201,
             "status code isn't 201.",
         )
+
+
+class TestEditCafe(APITestCase):
+    URL = "/api/v1/edit/"
+
+    def setUp(self):
+        user1 = User.objects.create(
+            username="testuser",
+        )
+        user1.set_password("123")
+        user1.save()
+        self.user = user1
+        user2 = User.objects.create(
+            username="testuser22",
+        )
+        user2.set_password("123")
+        user2.save()
+        self.user2 = user2
+        cafe1 = Cafe.objects.create(
+            city="서울",
+            name="test cafe 1",
+            address="test cafe address",
+            business_hours="test cafe business_hours",
+            img="test cafe img",
+        )
+        cafe1.save()
+        self.cafe1 = cafe1
+        filter1 = Filter.objects.create(
+            option="option1",
+            name="wifi1",
+            img="img1",
+        )
+        filter2 = Filter.objects.create(
+            option="option2",
+            name="wifi2",
+            img="img2",
+        )
+        self.filter1 = filter1
+        self.filter2 = filter2
+        filterscore100 = FilterScore.objects.create(score=100)
+        filterscore30 = FilterScore.objects.create(score=30)
+        balbox11100 = BallotBox.objects.create(
+            cafe=cafe1,
+            filter=filter1,
+            score=filterscore100,
+        )
+        balbox110 = BallotBox.objects.create(
+            cafe=cafe1,
+            filter=filter1,
+            score=filterscore30,
+        )
+        balbox12100 = BallotBox.objects.create(
+            cafe=cafe1,
+            filter=filter2,
+            score=filterscore100,
+        )
+        balbox120 = BallotBox.objects.create(
+            cafe=cafe1,
+            filter=filter2,
+            score=filterscore30,
+        )
+        balbox11100.users.add(user1)
+        self.balbox = balbox11100
+        balbox11100.save()
+
+        balbox110.users.add(user2)
+        balbox110.save()
+
+        balbox12100.users.add(user1)
+        balbox12100.save()
+
+        balbox120.save()
+
+    # 로그인 안한 상황
+    def test_edit_cafe_get_1(self):
+        response = self.client.get(
+            self.URL + str(self.cafe1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_edit_cafe_get_2(self):
+        self.client.force_login(
+            self.user,
+        )
+        response = self.client.get(
+            self.URL + str(self.cafe1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            200,
+            "status code isn't 200.",
+        )
+
+    def test_edit_cafe_get_3(self):
+        self.client.force_login(
+            self.user,
+        )
+        response = self.client.get(
+            self.URL + str(self.cafe1.pk),
+        )
+        data = response.json()
+        self.assertEqual(
+            len(data),
+            2,
+            "EditCafe get 출력 갯수가 잘못되었습니다.",
+        )
+
+    def test_edit_cafe_get_4(self):
+        self.client.force_login(
+            self.user2,
+        )
+        response = self.client.get(
+            self.URL + str(self.cafe1.pk),
+        )
+        data = response.json()
+        self.assertEqual(
+            len(data),
+            1,
+            "EditCafe get 출력 갯수가 잘못되었습니다.",
+        )
+
+    ######################################
+    def test_edit_cafe_put_1(self):
+        response = self.client.put(
+            self.URL + str(self.cafe1.pk),
+            data={
+                "ballot_box_list": [
+                    self.balbox,
+                ],
+            },
+        )
+
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_edit_cafe_put_2(self):
+        self.client.force_login(
+            self.user2,
+        )
+        response = self.client.put(
+            self.URL + str(self.cafe1.pk),
+            data={
+                "ballot_box_list": [
+                    self.balbox.pk,
+                ],
+            },
+        )
+        self.assertEqual(
+            response.status_code,
+            201,
+            "status code isn't 201.",
+        )
+
+    # def test_edit_cafe_put_1(self):
+    #     self.client.force_login(
+    #         self.user2,
+    #     )
+    #     response = self.client.put(
+    #         self.URL + str(self.cafe1.pk),
+    #     )
+    #     data = response.json()
+    #     print(data)
+    #     self.assertEqual(
+    #         len(data),
+    #         1,
+    #         "EditCafe get 출력 갯수가 잘못되었습니다.",
+    #     )
+
+
+# 뭘 더 체크하게 만들어야 하는데. 생각이 안난다.
