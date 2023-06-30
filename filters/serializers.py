@@ -8,7 +8,12 @@ from users.models import User
 class BallotBoxSerializer(ModelSerializer):
     class Meta:
         model = BallotBox
-        fields = ("pk",)
+        fields = (
+            "pk",
+            "cafe",
+            "filter",
+            "score",
+        )
 
 
 # class CafeCreateSerializer(ModelSerializer):
