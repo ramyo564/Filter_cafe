@@ -8,8 +8,8 @@ from rest_framework.views import APIView
 from filters.models import BallotBox, Filter, FilterScore
 from filters.serializers import BallotBoxSerializer
 
-from .models import Cafe
-from .serializers import CafesSerializer
+from .models import BusinessHours, Cafe
+from .serializers import BusinessHoursSerializer, CafeCreateSerializer, CafesSerializer
 
 
 # Create your views here.
@@ -115,6 +115,10 @@ class CreateCafe(APIView):
         이름 입력창
         => 화면 설계가 나오면 구체화
         """
+        return Response(
+            {"ok": "ok"},
+            status=status.HTTP_200_OK,
+        )
 
     @transaction.atomic(using="default")
     def post(self, request):
@@ -128,9 +132,18 @@ class CreateCafe(APIView):
         # 트랜젝션을 사용하여 모두 수행되거나 안되거나 설계하였음.
         try:
             with transaction.atomic():
-                cafeSerializer = CafesSerializer(data=request.data)
+                # 영업시간  생성
+                bhSerializer = BusinessHoursSerializer(data=request.data["business_hours"])
+                if bhSerializer.is_valid():
+                    bhSerializer.save()
+                # cafe 생성
+                cafeSerializer = CafeCreateSerializer(data=request.data)
                 if cafeSerializer.is_valid():
-                    cafe = cafeSerializer.save()
+                    # 생성한 영업시간 삽입해 준다.
+                    business_hours = BusinessHours.objects.get(pk=bhSerializer.data["id"])
+                    cafe = cafeSerializer.save(
+                        business_hours=business_hours,
+                    )
                     # BallotBox 생성(len(all_filter) * len(all_score) 만큼 필요하다.)
                     all_filter = Filter.objects.all()
                     all_score = FilterScore.objects.all()
