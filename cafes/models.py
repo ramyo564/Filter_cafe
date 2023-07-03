@@ -17,8 +17,6 @@ class Cafe(models.Model):
     business_hours = models.OneToOneField(
         "BusinessHours",
         on_delete=models.CASCADE,
-        blank=True,
-        null=True,
     )
     img = models.URLField(max_length=200)  # 사진은 한장인가?
 
