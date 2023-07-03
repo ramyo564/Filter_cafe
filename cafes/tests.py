@@ -1,6 +1,6 @@
 from rest_framework.test import APITestCase
 
-from cafes.models import Cafe
+from cafes.models import BusinessHours, Cafe
 from filters.models import BallotBox, Filter, FilterScore
 from users.models import User
 
@@ -16,18 +16,36 @@ class TestCityCafesGet(APITestCase):
     URL = "/api/v1/"
 
     def setUp(self):
+        businesshours1 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
+        businesshours2 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
         cafe1 = Cafe.objects.create(
             city="서울",
             name="test cafe 1",
             address="test cafe address",
-            business_hours="test cafe business_hours",
+            business_hours=businesshours1,
             img="test cafe img",
         )
         cafe2 = Cafe.objects.create(
             city="서울",
             name="test cafe 2",
             address="test cafe address",
-            business_hours="test cafe business_hours",
+            business_hours=businesshours2,
             img="test cafe img",
         )
         cafe1.save()
@@ -66,19 +84,37 @@ class TestCityCafesPost(APITestCase):
         )
         user2.set_password("123")
         user2.save()
-
+        businesshours1 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
+        self.businesshours1 = businesshours1
+        businesshours2 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
         cafe1 = Cafe.objects.create(
             city="서울",
             name="test cafe 1",
             address="test cafe address",
-            business_hours="test cafe business_hours",
+            business_hours=businesshours1,
             img="test cafe img",
         )
         cafe2 = Cafe.objects.create(
             city="서울",
             name="test cafe 2",
             address="test cafe address",
-            business_hours="test cafe business_hours",
+            business_hours=businesshours2,
             img="test cafe img",
         )
         cafe1.save()
@@ -162,10 +198,19 @@ class TestCityCafesPost(APITestCase):
                     "name": "test cafe 1",
                     "city": "서울",
                     "address": "test cafe address",
-                    "business_hours": "test cafe business_hours",
+                    "business_hours": {
+                        "fri": self.businesshours1.fri,
+                        "id": self.businesshours1.pk,
+                        "mon": self.businesshours1.mon,
+                        "sat": self.businesshours1.sat,
+                        "sun": self.businesshours1.sun,
+                        "thu": self.businesshours1.thu,
+                        "tue": self.businesshours1.tue,
+                        "wed": self.businesshours1.wed,
+                    },
                 }
             ],
-            "status code isn't 200.",
+            "만들어진 카페에 정보가 틀립니다.",
         )
 
 
@@ -222,14 +267,33 @@ class TestCreateCafe(APITestCase):
 
     # ! 테스트 코드가 너무 적음.
     def test_create_cafe(self):
+        businesshours1 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
         response = self.client.post(
             self.URL,
             data={
                 "name": "cafe 1",
                 "city": "서울",
                 "address": "address 1",
-                "business_hours": "9~12",
+                "business_hours": {
+                    "fri": businesshours1.fri,
+                    "id": businesshours1.pk,
+                    "mon": businesshours1.mon,
+                    "sat": businesshours1.sat,
+                    "sun": businesshours1.sun,
+                    "thu": businesshours1.thu,
+                    "tue": businesshours1.tue,
+                    "wed": businesshours1.wed,
+                },
             },
+            format="json",
         )
         self.assertEqual(
             response.status_code,
@@ -254,11 +318,21 @@ class TestEditCafe(APITestCase):
         user2.set_password("123")
         user2.save()
         self.user2 = user2
+        businesshours1 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
+        self.businesshours1 = businesshours1
         cafe1 = Cafe.objects.create(
             city="서울",
             name="test cafe 1",
             address="test cafe address",
-            business_hours="test cafe business_hours",
+            business_hours=businesshours1,
             img="test cafe img",
         )
         cafe1.save()
