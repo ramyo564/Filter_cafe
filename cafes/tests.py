@@ -267,15 +267,6 @@ class TestCreateCafe(APITestCase):
 
     # ! 테스트 코드가 너무 적음.
     def test_create_cafe(self):
-        businesshours1 = BusinessHours.objects.create(
-            mon="09~18시간",
-            tue="09~18시간",
-            wed="09~18시간",
-            thu="09~18시간",
-            fri="09~18시간",
-            sat="09~18시간",
-            sun="09~18시간",
-        )
         response = self.client.post(
             self.URL,
             data={
@@ -283,14 +274,13 @@ class TestCreateCafe(APITestCase):
                 "city": "서울",
                 "address": "address 1",
                 "business_hours": {
-                    "fri": businesshours1.fri,
-                    "id": businesshours1.pk,
-                    "mon": businesshours1.mon,
-                    "sat": businesshours1.sat,
-                    "sun": businesshours1.sun,
-                    "thu": businesshours1.thu,
-                    "tue": businesshours1.tue,
-                    "wed": businesshours1.wed,
+                    "fri": "09~18시간",
+                    "mon": "09~18시간",
+                    "sat": "09~18시간",
+                    "sun": "09~18시간",
+                    "thu": "09~18시간",
+                    "tue": "09~18시간",
+                    "wed": "09~18시간",
                 },
             },
             format="json",
