@@ -14,7 +14,12 @@ class Cafe(models.Model):
         choices=CityChoices,
     )
     address = models.CharField(max_length=100)
-    business_hours = models.CharField(max_length=100)
+    business_hours = models.OneToOneField(
+        "BusinessHours",
+        on_delete=models.CASCADE,
+        blank=True,
+        null=True,
+    )
     img = models.URLField(max_length=200)  # 사진은 한장인가?
 
     def __str__(self):
@@ -39,3 +44,13 @@ class Review(models.Model):
 
     def __str__(self):
         return self.content
+
+
+class BusinessHours(models.Model):
+    mon = models.CharField(max_length=50)
+    tue = models.CharField(max_length=50)
+    wed = models.CharField(max_length=50)
+    thu = models.CharField(max_length=50)
+    fri = models.CharField(max_length=50)
+    sat = models.CharField(max_length=50)
+    sun = models.CharField(max_length=50)
