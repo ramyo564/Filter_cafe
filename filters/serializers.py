@@ -23,3 +23,12 @@ class FilterSerializer(ModelSerializer):
             "pk",
             "name",
         )
+
+
+class FilterScoreSerializer(ModelSerializer):
+    class Meta:
+        model = FilterScore
+        fields = (
+            "pk",
+            "score",
+        )
