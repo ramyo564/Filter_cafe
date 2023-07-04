@@ -9,6 +9,7 @@ from rest_framework.permissions import (
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
+from cafes.models import Cafe
 from filters.models import BallotBox, Filter, FilterScore
 from filters.serializers import BallotBoxSerializer, FilterScoreSerializer, FilterSerializer
 
@@ -29,15 +30,29 @@ class CafeFilter(APIView):
         )
         return Response(serializer.data, status.HTTP_200_OK)
 
+    @transaction.atomic(using="default")
     def post(self, request):
-        filterSerializer = FilterSerializer(data=request.data)
-        if filterSerializer.is_valid():
-            filterSerializer.save()
-            return Response(
-                filterSerializer.data,
-                status=status.HTTP_201_CREATED,
-            )
-
+        try:
+            with transaction.atomic():
+                # Filter생성
+                filterSerializer = FilterSerializer(data=request.data)
+                if filterSerializer.is_valid():
+                    filterSerializer.save()
+                    # BallotBox 생성
+                    filter = Filter.objects.get(pk=filterSerializer.data["pk"])
+                    for cafe in Cafe.objects.all():
+                        for score in FilterScore.objects.all():
+                            BallotBox.objects.create(
+                                cafe=cafe,
+                                filter=filter,
+                                score=score,
+                            )
+                    return Response(
+                        filterSerializer.data,
+                        status=status.HTTP_201_CREATED,
+                    )
+        except:
+            pass
         return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -102,15 +117,29 @@ class CafeFilterScore(APIView):
         )
         return Response(serializer.data, status.HTTP_200_OK)
 
+    @transaction.atomic(using="default")
     def post(self, request):
-        filterScoreSerializer = FilterScoreSerializer(data=request.data)
-        if filterScoreSerializer.is_valid():
-            filterScoreSerializer.save()
-            return Response(
-                filterScoreSerializer.data,
-                status=status.HTTP_201_CREATED,
-            )
-
+        try:
+            with transaction.atomic():
+                # score생성
+                filterScoreSerializer = FilterScoreSerializer(data=request.data)
+                if filterScoreSerializer.is_valid():
+                    filterScoreSerializer.save()
+                    # BallotBox 생성
+                    score = FilterScore.objects.get(pk=filterScoreSerializer.data["pk"])
+                    for cafe in Cafe.objects.all():
+                        for filter in Filter.objects.all():
+                            BallotBox.objects.create(
+                                cafe=cafe,
+                                filter=filter,
+                                score=score,
+                            )
+                    return Response(
+                        filterScoreSerializer.data,
+                        status=status.HTTP_201_CREATED,
+                    )
+        except:
+            pass
         return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
