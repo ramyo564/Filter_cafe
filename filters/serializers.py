@@ -16,6 +16,10 @@ class BallotBoxSerializer(ModelSerializer):
         )
 
 
-# class CafeCreateSerializer(ModelSerializer):
-#     class Meta:
-#         model = C
+class FilterSerializer(ModelSerializer):
+    class Meta:
+        model = Filter
+        fields = (
+            "pk",
+            "name",
+        )
