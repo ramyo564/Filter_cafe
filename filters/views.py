@@ -10,11 +10,9 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from filters.models import BallotBox, Filter, FilterScore
-from filters.serializers import BallotBoxSerializer, FilterSerializer
+from filters.serializers import BallotBoxSerializer, FilterScoreSerializer, FilterSerializer
 
 
-# Create your views here.
-# testcode 아직 안짬.
 class CafeFilter(APIView):
     # 관리자 전용 페이지
     permission_classes = [IsAdminUser]
@@ -83,4 +81,77 @@ class CafeFilterDetail(APIView):
     def delete(self, request, filter_pk):
         filter = self.get_object(filter_pk)
         filter.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
+
+
+#################################################
+
+
+class CafeFilterScore(APIView):
+    # 관리자 전용 페이지
+    permission_classes = [IsAdminUser]
+
+    def get(self, request):
+        """
+        all_filter 출력하도록 설정.
+        """
+        all_filter_score = FilterScore.objects.all()
+        serializer = FilterScoreSerializer(
+            all_filter_score,
+            many=True,
+        )
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    def post(self, request):
+        filterScoreSerializer = FilterScoreSerializer(data=request.data)
+        if filterScoreSerializer.is_valid():
+            filterScoreSerializer.save()
+            return Response(
+                filterScoreSerializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+
+        return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
+
+
+class CafeFilterScoreDetail(APIView):
+    # 관리자 전용 페이지
+    permission_classes = [IsAdminUser]
+
+    def get_object(self, pk):
+        try:
+            return FilterScore.objects.get(pk=pk)
+        except FilterScore.DoesNotExist:
+            raise NotFound
+
+    def get(self, request, filter_score_pk):
+        """
+        form만 있으면 되지 않을까?
+        일단 모르겠어 가지고 all_filter 출력하도록 설정.
+        """
+        filterScore = self.get_object(filter_score_pk)
+        serializer = FilterScoreSerializer(filterScore)
+        return Response(serializer.data, status.HTTP_200_OK)
+
+    def put(self, request, filter_score_pk):
+        filterScore = self.get_object(filter_score_pk)
+        filterScoreSerializer = FilterScoreSerializer(
+            filterScore,
+            data=request.data,
+            partial=True,
+        )
+        if filterScoreSerializer.is_valid():
+            filterScoreSerializer.save()
+            return Response(
+                filterScoreSerializer.data,
+                status=status.HTTP_201_CREATED,
+            )
+        return Response(
+            filterScoreSerializer.errors,
+            status=status.HTTP_400_BAD_REQUEST,
+        )
+
+    def delete(self, request, filter_score_pk):
+        filterScore = self.get_object(filter_score_pk)
+        filterScore.delete()
         return Response(status=status.HTTP_204_NO_CONTENT)

@@ -3,8 +3,6 @@ from rest_framework.test import APITestCase
 from filters.models import Filter, FilterScore
 from users.models import User
 
-# Create your tests here.
-
 
 class TestFilter(APITestCase):
     URL = "/api/v1/filter/"
@@ -252,4 +250,278 @@ class TestFilterDetail(APITestCase):
             response.status_code,
             204,
             "filter 삭제에 문제가 있습니다.",
+        )
+
+
+########################################################################################
+
+
+class TestFilterScore(APITestCase):
+    URL = "/api/v1/filter/score/"
+
+    def setUp(self):
+        user_staff = User.objects.create(
+            username="testuser",
+            is_staff=True,
+        )
+        user_staff.set_password("123")
+        user_staff.save()
+        self.user_staff = user_staff
+
+        user2 = User.objects.create(
+            username="testuser2",
+        )
+        user2.set_password("123")
+        user2.save()
+        self.user2 = user2
+
+    def test_filter_score_get_1(self):
+        response = self.client.get(
+            self.URL,
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_filter_score_get_2(self):
+        self.client.force_login(
+            self.user2,
+        )
+        response = self.client.get(
+            self.URL,
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_filter_score_get_3(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.get(
+            self.URL,
+        )
+        self.assertEqual(
+            response.status_code,
+            200,
+            "status code isn't 200.",
+        )
+
+    def test_filter_score_get_4(self):
+        total = 4
+        for i in range(total):
+            FilterScore.objects.create(
+                score=i,
+            )
+
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.get(
+            self.URL,
+        )
+        data = response.json()
+        self.assertEqual(
+            len(data),
+            total,
+            "필터의 갯수를 잘못 출력하였습니다.",
+        )
+
+    def test_filter_score_duplicate_check(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+
+        total = 4
+        try:
+            for _ in range(total):
+                FilterScore.objects.create(
+                    score=3,
+                )
+            self.assertEqual(
+                0,
+                1,
+                "FilterScore가 중복 생성되었습니다. .",
+            )
+        except:
+            self.assertEqual(
+                0,
+                0,
+                "통과.",
+            )
+
+    def test_filter_score_max_check(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+
+        max_num = 101
+        try:
+            FilterScore.objects.create(
+                score=max_num,
+            )
+            self.assertEqual(
+                0,
+                1,
+                "최대값이 100 초과입니다.",
+            )
+        except:
+            self.assertEqual(
+                0,
+                0,
+                "통과.",
+            )
+
+    def test_filter_score_post_1(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.post(
+            self.URL,
+            data={"score": 50},
+        )
+        self.assertEqual(
+            response.status_code,
+            201,
+            "status code isn't 201.",
+        )
+
+    def test_filter_score_post_2(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.post(
+            self.URL,
+            data={"score": 50},
+        )
+        data = response.json()
+        self.assertEqual(
+            data["score"],
+            50,
+            "필터 점수가 잘못 생성되었습니다.",
+        )
+
+
+class TestFilterScoreDetail(APITestCase):
+    URL = "/api/v1/filter/score/"
+
+    def setUp(self):
+        user_staff = User.objects.create(
+            username="testuser",
+            is_staff=True,
+        )
+        user_staff.set_password("123")
+        user_staff.save()
+        self.user_staff = user_staff
+
+        user = User.objects.create(
+            username="testuser_nomal",
+        )
+        user.set_password("123")
+        user.save()
+        self.user = user
+
+        filterScore1 = FilterScore.objects.create(
+            score=50,
+        )
+        self.filterScore1 = filterScore1
+
+    def test_filter_score_detail_get_1(self):
+        response = self.client.get(
+            self.URL + str(self.filterScore1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_filter_score_detail_get_2(self):
+        self.client.force_login(
+            self.user,
+        )
+        response = self.client.get(
+            self.URL + str(self.filterScore1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_filter_score_detail_get_3(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.get(
+            self.URL + str(self.filterScore1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            200,
+            "status code isn't 200.",
+        )
+
+    def test_filter_score_detail_get_4(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.get(
+            self.URL + str(self.filterScore1.pk),
+        )
+        data = response.json()
+        self.assertEqual(
+            data["score"],
+            50,
+            "filterScore 점수가 잘못 출력되었습니다.",
+        )
+
+    def test_filter_score_detail_put_1(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.put(
+            self.URL + str(self.filterScore1.pk),
+            data={
+                "score": 55,
+            },
+        )
+        self.assertEqual(
+            response.status_code,
+            201,
+            "filter 이름이 잘못 출력되었습니다.",
+        )
+
+    def test_filter_score_detail_put_2(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.put(
+            self.URL + str(self.filterScore1.pk),
+            data={
+                "score": 55,
+            },
+        )
+        data = response.json()
+        self.assertEqual(
+            data["score"],
+            55,
+            "filterScore 점수가 잘못 수정되었습니다.",
+        )
+
+    def test_filter_score_detail_delete_1(self):
+        self.client.force_login(
+            self.user_staff,
+        )
+        response = self.client.delete(
+            self.URL + str(self.filterScore1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            204,
+            "filterScore 삭제에 문제가 있습니다.",
         )
