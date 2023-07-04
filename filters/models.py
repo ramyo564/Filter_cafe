@@ -4,16 +4,21 @@ from django.db import models
 
 
 class Filter(models.Model):
+    """
+    어떻게 해야 할지 몰라서 주석 처리.
     OptionChoices = [
         ("productivity", "Productivity"),
         ("community", "Community"),
         ("service", "Service"),
     ]
-
     option = models.CharField(choices=OptionChoices, max_length=20)
-
-    name = models.CharField(max_length=50)
     img = models.URLField(max_length=200)
+    """
+
+    name = models.CharField(
+        max_length=50,
+        unique=True,
+    )
 
     def __str__(self):
         return self.name
