@@ -215,7 +215,7 @@ class TestCityCafesPost(APITestCase):
 
 
 class TestCityList(APITestCase):
-    URL = "/api/v1/cities"
+    URL = "/api/v1/cities/"
 
     def test_city_list_1(self):
         response = self.client.get(self.URL)
@@ -239,7 +239,7 @@ class TestCityList(APITestCase):
 
 
 class TestCreateCafe(APITestCase):
-    URL = "/api/v1/create"
+    URL = "/api/v1/create/"
 
     def setUp(self):
         Filter.objects.create(
@@ -473,3 +473,124 @@ class TestEditCafe(APITestCase):
     #         1,
     #         "EditCafe get 출력 갯수가 잘못되었습니다.",
     #     )
+
+
+class TestCafeDetail(APITestCase):
+    URL = "/api/v1/detail/"
+
+    def setUp(self):
+        user1 = User.objects.create(
+            username="testuser",
+        )
+        user1.set_password("123")
+        user1.save()
+        self.user1 = user1
+
+        businesshours1 = BusinessHours.objects.create(
+            mon="09~18시간",
+            tue="09~18시간",
+            wed="09~18시간",
+            thu="09~18시간",
+            fri="09~18시간",
+            sat="09~18시간",
+            sun="09~18시간",
+        )
+        self.businesshours1 = businesshours1
+        cafe1 = Cafe.objects.create(
+            city="서울",
+            name="test cafe 1",
+            address="test cafe address",
+            business_hours=businesshours1,
+            img="test cafe img",
+        )
+        self.cafe1 = cafe1
+
+    def test_cafe_detail_get_1(self):
+        response = self.client.get(
+            self.URL + str(self.cafe1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            200,
+            "status code isn't 200.",
+        )
+
+    def test_cafe_detail_get_2(self):
+        response = self.client.get(
+            self.URL + str(self.cafe1.pk),
+        )
+        data = response.json()
+        self.assertEqual(
+            data["name"],
+            "test cafe 1",
+            "잘못된 정보를 가져왔습니다.",
+        )
+
+    def test_cafe_detail_put_1(self):
+        response = self.client.put(
+            self.URL + str(self.cafe1.pk),
+            data={
+                "name": "test cafe put",
+            },
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_cafe_detail_put_2(self):
+        self.client.force_login(
+            self.user1,
+        )
+        response = self.client.put(
+            self.URL + str(self.cafe1.pk),
+            data={
+                "name": "test cafe put",
+            },
+        )
+        self.assertEqual(
+            response.status_code,
+            201,
+            "status code isn't 201.",
+        )
+
+    def test_cafe_detail_put_3(self):
+        self.client.force_login(
+            self.user1,
+        )
+        response = self.client.put(
+            self.URL + str(self.cafe1.pk),
+            data={
+                "name": "test cafe put",
+            },
+        )
+        data = response.json()
+        self.assertEqual(
+            data["name"],
+            "test cafe put",
+            "잘못된 정보를 가져왔습니다.",
+        )
+
+    def test_cafe_detail_delete_1(self):
+        response = self.client.delete(
+            self.URL + str(self.cafe1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            403,
+            "status code isn't 403.",
+        )
+
+    def test_cafe_detail_delete_2(self):
+        self.client.force_login(
+            self.user1,
+        )
+        response = self.client.delete(
+            self.URL + str(self.cafe1.pk),
+        )
+        self.assertEqual(
+            response.status_code,
+            204,
+            "status code isn't 204.",
+        )
