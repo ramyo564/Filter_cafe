@@ -1,3 +1,4 @@
+from django.core.validators import MaxValueValidator
 from django.db import models
 
 # Create your models here.
@@ -25,7 +26,10 @@ class Filter(models.Model):
 
 
 class FilterScore(models.Model):
-    score = models.PositiveIntegerField()
+    score = models.PositiveIntegerField(
+        unique=True,
+        validators=[MaxValueValidator(100)],
+    )
 
 
 class BallotBox(models.Model):
