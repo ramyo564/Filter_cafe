@@ -1,11 +1,7 @@
 from django.db import transaction
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import (
-    IsAdminUser,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnly
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -226,18 +222,34 @@ class EditCafe(APIView):
         return Response({"message": "Error"}, status=status.HTTP_400_BAD_REQUEST)
 
 
-def cafe_delete(request, cafe_pk):
-    """
-    검사??? 어떻게 해야지 못정함.
+class CafeDetail(APIView):
+    permission_classes = [IsAuthenticatedOrReadOnly]
 
-    delete요청인지 확인
+    def get_object(self, pk):
+        try:
+            return Cafe.objects.get(pk=pk)
+        except Cafe.DoesNotExist:
+            raise NotFound
 
-    cafe_pk가 있는지 검사
+    def get(self, request, cafe_pk):
+        cafe = self.get_object(cafe_pk)
+        serializer = CafesSerializer(cafe)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
-    해당 PK에 해당하는 데이터 삭제
+    # 이건 필요한가? 일단 만들어 놓음.
+    def put(self, request, cafe_pk):
+        cafe = self.get_object(cafe_pk)
+        serializer = CafesSerializer(
+            cafe,
+            data=request.data,
+            partial=True,
+        )
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-    (이때 데이터를 복구가능하게 할지 아니면 그냥 영구 삭제할지)
-
-    리다일렉트 city_cafes
-    """
-    pass
+    def delete(self, request, cafe_pk):
+        cafe = self.get_object(cafe_pk)
+        cafe.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
