@@ -1,17 +1,13 @@
 from django.db import transaction
 from rest_framework import status
 from rest_framework.exceptions import NotFound
-from rest_framework.permissions import (
-    IsAdminUser,
-    IsAuthenticated,
-    IsAuthenticatedOrReadOnly,
-)
+from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
 from cafes.models import Cafe
 from filters.models import BallotBox, Filter, FilterScore
-from filters.serializers import BallotBoxSerializer, FilterScoreSerializer, FilterSerializer
+from filters.serializers import FilterScoreSerializer, FilterSerializer
 
 
 class CafeFilter(APIView):
@@ -38,7 +34,7 @@ class CafeFilter(APIView):
                 filterSerializer = FilterSerializer(data=request.data)
                 if filterSerializer.is_valid():
                     filterSerializer.save()
-                    # BallotBox 생성
+                    # BallotBox 생성(이 부분 테스트 코드X, 작성법 모르겠음.)
                     filter = Filter.objects.get(pk=filterSerializer.data["pk"])
                     for cafe in Cafe.objects.all():
                         for score in FilterScore.objects.all():
@@ -125,7 +121,7 @@ class CafeFilterScore(APIView):
                 filterScoreSerializer = FilterScoreSerializer(data=request.data)
                 if filterScoreSerializer.is_valid():
                     filterScoreSerializer.save()
-                    # BallotBox 생성
+                    # BallotBox 생성(이 부분 테스트 코드X, 작성법 모르겠음.)
                     score = FilterScore.objects.get(pk=filterScoreSerializer.data["pk"])
                     for cafe in Cafe.objects.all():
                         for filter in Filter.objects.all():
