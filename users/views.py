@@ -44,10 +44,10 @@ class LogIn(APIView):
         if user:
             # 현재 세션 방식 채택(JWT사용하고 싶으면 바꾸어도 됩니다:)
             login(request, user)
-            return Response({"ok": "Welcome!"})
+            return Response({"ok": "환영합니다!"})
         else:
             return Response(
-                {"error": "wrong password"},
+                {"error": "아이디와 비밀번호를 확인해 주세요."},
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
@@ -57,7 +57,7 @@ class LogOut(APIView):
 
     def post(self, request):
         logout(request)
-        return Response({"ok": "bye!"})
+        return Response({"ok": "안녕하가세요!"})
 
 
 class UserInformation(APIView):
@@ -82,6 +82,7 @@ class UserInformation(APIView):
         return Response(status=status.HTTP_204_NO_CONTENT)
 
 
+# 테스트 코드 없음.
 class KakaoLogIn(APIView):
     def post(self, request):
         try:
