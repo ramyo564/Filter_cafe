@@ -1,3 +1,17 @@
-from django.shortcuts import render
+from rest_framework import viewsets
+from rest_framework.response import Response
+from drf_spectacular.utils import extend_schema
+from .models import User
+from .serializers import UserSerializer
 
-# Create your views here.
+
+class UserViewSet(viewsets.ViewSet):
+    '''
+    A Viewset for viewing all Cities
+    '''
+    queryset = User.objects.all()
+
+    @extend_schema(responses=UserSerializer)
+    def list(self, request):
+        serializer = UserSerializer(self.queryset, many=True)
+        return Response(serializer.data)
