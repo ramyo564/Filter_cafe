@@ -47,7 +47,7 @@ class LogIn(APIView):
             password=password,
         )
         if user:
-            # login시키고 백엔드에 세션 생성, 사용자에게 cookie제공
+            # 현재 세션 방식 채택(JWT사용하고 싶으면 바꾸어도 됩니다:)
             login(request, user)
             return Response({"ok": "Welcome!"})
         else:
@@ -85,10 +85,10 @@ class UserInformation(APIView):
         유저 정보 수정
         """
 
-    def delete(request):
-        """
-        회원 탈퇴
-        """
+    def delete(self, request):
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
 
 
 class KakaoLogIn(APIView):
