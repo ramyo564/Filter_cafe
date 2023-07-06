@@ -100,7 +100,7 @@ class KakaoLogIn(APIView):
                 headers={"Content-Type": "application/x-www-form-urlencoded"},
                 data={
                     "grant_type": "authorization_code",
-                    "client_id": "0999329903a4ff2d986c09fdd71eb44f",
+                    "client_id": "REST API",
                     "redirect_uri": "http://127.0.0.1:3000/social/kakao",
                     "code": code,
                 },
@@ -116,20 +116,29 @@ class KakaoLogIn(APIView):
             user_data = user_data.json()
             kakao_account = user_data.get("kakao_account")
             profile = kakao_account.get("profile")
+            # 이메일 허용 안하면 돌려 보내기
+            if kakao_account.get("email") == None:
+                return Response(
+                    {"message": "이메일을 허용해 주세요."}, status=status.HTTP_400_BAD_REQUEST
+                )
+            # 이메일 @ 이전까지 사용하도록(테스트 해 봐야함 07/06)
+            else:
+                username = kakao_account.get("email").split("@")[0]
             try:
-                user = User.objects.get(email=kakao_account.get("email"))
-                login(request, user)
+                user = User.objects.get(username=username)
+                # 테스트 완료 이후 주석 풀어 주세요.
+                # login(request, user)
                 return Response(status=status.HTTP_200_OK)
             except User.DoesNotExist:
                 user = User.objects.create(
-                    email=kakao_account.get("email"),
-                    username=profile.get("nickname"),
+                    username=username,
                     name=profile.get("nickname"),
                     avatar=profile.get("profile_image_url"),
                 )
                 user.set_unusable_password()
-                user.save()
-                login(request, user)
+                # 테스트 완료 이후 주석 풀어 주세요.
+                # user.save()
+                # login(request, user)
                 return Response(status=status.HTTP_200_OK)
         except Exception:
             return Response(status=status.HTTP_400_BAD_REQUEST)
