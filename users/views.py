@@ -10,7 +10,6 @@ from .models import User
 from .serializers import UserSerializer
 
 
-# 3 join community
 class Signup(APIView):
     def post(self, request):
         password = request.data.get("password")
@@ -32,10 +31,6 @@ class Signup(APIView):
 
 
 class LogIn(APIView):
-    """
-    로그인
-    """
-
     def post(self, request):
         username = request.data.get("username")
         password = request.data.get("password")
@@ -58,10 +53,6 @@ class LogIn(APIView):
 
 
 class LogOut(APIView):
-    """
-    로그 아웃
-    """
-
     permission_classes = [IsAuthenticated]
 
     def post(self, request):
