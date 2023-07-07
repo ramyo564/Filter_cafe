@@ -15,8 +15,10 @@ class UserFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = User
 
-    name = factory.Sequence(lambda n: "User%d" % n)
+    username = factory.Sequence(lambda n: "username_%d" % n)
+    name = factory.Sequence(lambda n: "User_%d" % n)
     age = factory.Faker("random_int", min=1, max=100)
+    gender = factory.Iterator(['Male', 'Female'])
 
 
 class BusinessHoursFactory(factory.django.DjangoModelFactory):

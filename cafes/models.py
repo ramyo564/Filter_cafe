@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+from filters.models import Option
 
 
 class Cafe(models.Model):
@@ -13,6 +14,7 @@ class Cafe(models.Model):
     map = models.URLField(max_length=200)
     reviews = models.ManyToManyField("users.User", through="Review")
     city = models.ForeignKey("filters.City", on_delete=models.CASCADE)
+    options = models.ManyToManyField(Option)
 
     def __str__(self):
         return self.name

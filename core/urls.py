@@ -18,12 +18,19 @@ from django.contrib import admin
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
 from drf_spectacular.views import SpectacularAPIView, SpectacularSwaggerView
-from cafes import views
+from cafes import views as cafe_views
+from users import views as user_views
+from filters import views as filter_views
+
 
 router = DefaultRouter()
-router.register(r"cafe", views.CafeViewSet)
-router.register(r"review", views.ReviewViewSet)
-router.register(r"businesshours", views.BusinessHoursViewSet)
+router.register(r"cafe", cafe_views.CafeViewSet)
+router.register(r"review", cafe_views.ReviewViewSet)
+router.register(r"businesshours", cafe_views.BusinessHoursViewSet)
+router.register(r"city", filter_views.CityViewSet)
+router.register(r"filter", filter_views.FilterViewSet)
+router.register(r"option", filter_views.OptionViewSet)
+router.register(r"user", user_views.UserViewSet)
 
 # test
 urlpatterns = [
