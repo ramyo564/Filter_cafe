@@ -1,7 +1,7 @@
 from rest_framework.serializers import ModelSerializer
 
 from cafes.models import Cafe, Review
-from filters.models import BallotBox, Filter, FilterScore
+from filters.models import BallotBox, City, Filter, FilterScore
 from users.models import User
 
 
@@ -31,4 +31,13 @@ class FilterScoreSerializer(ModelSerializer):
         fields = (
             "pk",
             "score",
+        )
+
+
+class CitySerializer(ModelSerializer):
+    class Meta:
+        model = City
+        fields = (
+            "pk",
+            "name",
         )

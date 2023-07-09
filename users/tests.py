@@ -11,7 +11,10 @@ class TestUserSignup(APITestCase):
     def test_user_signup_1(self):
         response = self.client.post(
             self.URL,
-            data={"username": "test1", "password": "123"},
+            data={
+                "username": "test1",
+                "password": "123",
+            },
         )
         self.assertEqual(
             response.status_code,

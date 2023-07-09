@@ -59,7 +59,7 @@ class BallotBox(models.Model):
 
 class City(models.Model):
     name = models.CharField(max_length=50)
-    slug = models.SlugField(max_length=255)
+    # slug = models.SlugField(max_length=255)
 
     def __str__(self):
         return self.name
