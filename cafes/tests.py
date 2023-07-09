@@ -1,7 +1,7 @@
 from rest_framework.test import APITestCase
 
 from cafes.models import BusinessHours, Cafe
-from filters.models import BallotBox, Filter, FilterScore
+from filters.models import BallotBox, City, Filter, FilterScore
 from users.models import User
 
 """
@@ -34,15 +34,18 @@ class TestCityCafesGet(APITestCase):
             sat="09~18시간",
             sun="09~18시간",
         )
+        seoul = City.objects.create(
+            name="서울",
+        )
         cafe1 = Cafe.objects.create(
-            city="서울",
+            city=seoul,
             name="test cafe 1",
             address="test cafe address",
             business_hours=businesshours1,
             img="test cafe img",
         )
         cafe2 = Cafe.objects.create(
-            city="서울",
+            city=seoul,
             name="test cafe 2",
             address="test cafe address",
             business_hours=businesshours2,
@@ -74,6 +77,10 @@ class TestCityCafesPost(APITestCase):
     URL = "/api/v1/"
 
     def setUp(self):
+        seoul = City.objects.create(
+            name="서울",
+        )
+        self.city = seoul
         user1 = User.objects.create(
             username="testuser",
         )
@@ -104,14 +111,14 @@ class TestCityCafesPost(APITestCase):
             sun="09~18시간",
         )
         cafe1 = Cafe.objects.create(
-            city="서울",
+            city=seoul,
             name="test cafe 1",
             address="test cafe address",
             business_hours=businesshours1,
             img="test cafe img",
         )
         cafe2 = Cafe.objects.create(
-            city="서울",
+            city=seoul,
             name="test cafe 2",
             address="test cafe address",
             business_hours=businesshours2,
@@ -196,7 +203,7 @@ class TestCityCafesPost(APITestCase):
                 {
                     "pk": 1,
                     "name": "test cafe 1",
-                    "city": "서울",
+                    "city": self.city.pk,
                     "address": "test cafe address",
                     "business_hours": {
                         "fri": self.businesshours1.fri,
@@ -264,6 +271,10 @@ class TestCreateCafe(APITestCase):
         self.client.force_login(
             user1,
         )
+        seoul = City.objects.create(
+            name="서울",
+        )
+        self.city = seoul
 
     # ! 테스트 코드가 너무 적음.
     def test_create_cafe(self):
@@ -318,8 +329,11 @@ class TestEditCafe(APITestCase):
             sun="09~18시간",
         )
         self.businesshours1 = businesshours1
+        seoul = City.objects.create(
+            name="서울",
+        )
         cafe1 = Cafe.objects.create(
-            city="서울",
+            city=seoul,
             name="test cafe 1",
             address="test cafe address",
             business_hours=businesshours1,
@@ -485,7 +499,9 @@ class TestCafeDetail(APITestCase):
         user1.set_password("123")
         user1.save()
         self.user1 = user1
-
+        seoul = City.objects.create(
+            name="서울",
+        )
         businesshours1 = BusinessHours.objects.create(
             mon="09~18시간",
             tue="09~18시간",
@@ -497,7 +513,7 @@ class TestCafeDetail(APITestCase):
         )
         self.businesshours1 = businesshours1
         cafe1 = Cafe.objects.create(
-            city="서울",
+            city=seoul,
             name="test cafe 1",
             address="test cafe address",
             business_hours=businesshours1,

@@ -5,8 +5,8 @@ from rest_framework.permissions import IsAuthenticated, IsAuthenticatedOrReadOnl
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from filters.models import BallotBox, Filter, FilterScore
-from filters.serializers import BallotBoxSerializer, FilterSerializer
+from filters.models import BallotBox, City, Filter, FilterScore
+from filters.serializers import BallotBoxSerializer, CitySerializer, FilterSerializer
 
 from .models import BusinessHours, Cafe
 from .serializers import BusinessHoursSerializer, CafeCreateSerializer, CafesSerializer
@@ -27,7 +27,7 @@ class CityCafes(APIView):
         """
         페이지네이션(이건 테스트 코드 아직 추가X, 논의 필요)
         """
-
+        city = City.objects.get(name=city)
         cafes = Cafe.objects.filter(city=city)
         serializer = CafesSerializer(cafes, many=True)
         return Response(serializer.data, status.HTTP_200_OK)
@@ -36,7 +36,7 @@ class CityCafes(APIView):
         """
         총 카페 갯수 전달이 되어야 합니다.(이 부분은 프론트와 상의를 해야 한다. )
         """
-
+        city = City.objects.get(name=city)
         cafes = Cafe.objects.filter(city=city)
         min_satisfaction_score = 50
         cafe_satisfaction_list = []
@@ -78,10 +78,15 @@ class CityCafes(APIView):
 # 테코 0626 현재 X(넘김)
 class CityList(APIView):
     def get(self, request):
-        cities = []
-        for city in Cafe.CityChoices:
-            cities.append(city[0])
-        return Response(cities, status.HTTP_200_OK)
+        all_cities = City.objects.all()
+        serializer = CitySerializer(
+            all_cities,
+            many=True,
+        )
+        return Response(
+            serializer.data,
+            status.HTTP_200_OK,
+        )
 
 
 # SUGGEST PLACES
@@ -111,6 +116,9 @@ class CreateCafe(APIView):
                 bhSerializer = BusinessHoursSerializer(data=request.data["business_hours"])
                 if bhSerializer.is_valid():
                     bhSerializer.save()
+                # city 찾아주기
+                city = request.data["city"]
+                city = City.objects.get(name=city)
                 # cafe 생성
                 cafeSerializer = CafeCreateSerializer(data=request.data)
                 if cafeSerializer.is_valid():
@@ -118,6 +126,7 @@ class CreateCafe(APIView):
                     business_hours = BusinessHours.objects.get(pk=bhSerializer.data["id"])
                     cafe = cafeSerializer.save(
                         business_hours=business_hours,
+                        city=city,
                     )
                     # BallotBox 생성(len(all_filter) * len(all_score) 만큼 필요하다.)
                     all_filter = Filter.objects.all()

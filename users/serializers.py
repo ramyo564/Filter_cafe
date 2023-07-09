@@ -10,4 +10,6 @@ class UserSerializer(ModelSerializer):
             "pk",
             "username",
             "name",
+            "age",
+            "gender",
         )
