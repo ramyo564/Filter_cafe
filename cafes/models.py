@@ -1,24 +1,17 @@
+from django.core.validators import MaxValueValidator
 from django.db import models
 
 
 class Cafe(models.Model):
     name = models.CharField(max_length=20)
-    CityChoices = [
-        ("서울", "서울"),
-        ("인천", "인천"),
-        ("부산", "부산"),
-    ]
-
-    city = models.CharField(
-        max_length=20,
-        choices=CityChoices,
-    )
+    city = models.ForeignKey("filters.City", on_delete=models.CASCADE)
     address = models.CharField(max_length=100)
     business_hours = models.OneToOneField(
         "BusinessHours",
         on_delete=models.CASCADE,
     )
     img = models.URLField(max_length=200)  # 사진은 한장인가?
+    # map = models.URLField(max_length=200)
 
     def __str__(self):
         return self.name
@@ -35,7 +28,9 @@ class Review(models.Model):
         on_delete=models.CASCADE,
         related_name="reviews",
     )
-    rating = models.PositiveIntegerField()
+    rating = models.PositiveIntegerField(
+        validators=[MaxValueValidator(2)],
+    )
     content = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -52,3 +47,14 @@ class BusinessHours(models.Model):
     fri = models.CharField(max_length=50)
     sat = models.CharField(max_length=50)
     sun = models.CharField(max_length=50)
+
+    def __str__(self):
+        return (
+            f"Monday: {self.mon}\n"
+            f"Tuesday: {self.tue}\n"
+            f"Wednesday: {self.wed}\n"
+            f"Thursday: {self.thu}\n"
+            f"Friday: {self.fri}\n"
+            f"Saturday: {self.sat}\n"
+            f"Sunday: {self.sun}"
+        )
