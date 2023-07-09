@@ -34,6 +34,5 @@ class CafeCreateSerializer(ModelSerializer):
         model = Cafe
         fields = (
             "name",
-            "city",
             "address",
         )
