@@ -1,25 +1,26 @@
 from django.core.validators import MaxValueValidator
 from django.db import models
 
-# Create your models here.
-
 
 class Filter(models.Model):
-    """
-    어떻게 해야 할지 몰라서 주석 처리.
-    OptionChoices = [
-        ("productivity", "Productivity"),
-        ("community", "Community"),
-        ("service", "Service"),
-    ]
-    option = models.CharField(choices=OptionChoices, max_length=20)
-    img = models.URLField(max_length=200)
-    """
-
+    option = models.ForeignKey(
+        "Option",
+        on_delete=models.CASCADE,
+        null=True,
+        blank=True,
+    )
     name = models.CharField(
         max_length=50,
         unique=True,
     )
+    # is_active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name
+
+
+class Option(models.Model):
+    name = models.CharField(max_length=50)
 
     def __str__(self):
         return self.name
@@ -54,3 +55,11 @@ class BallotBox(models.Model):
         blank=True,
         null=True,
     )
+
+
+class City(models.Model):
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=255)
+
+    def __str__(self):
+        return self.name
