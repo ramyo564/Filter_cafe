@@ -1,7 +1,5 @@
 from rest_framework.test import APITestCase
 
-from cafes.models import BusinessHours, Cafe
-from filters.models import BallotBox, Filter, FilterScore
 from users.models import User
 
 
