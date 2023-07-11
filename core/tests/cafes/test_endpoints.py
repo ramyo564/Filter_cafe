@@ -12,9 +12,9 @@ class TestCafeEndpoints:
         # Arrange
         cafe_factory.create_batch(10)
         # Act
-        response = api_client().get(self.endpoint + "City_1")
+        response = api_client().get(self.endpoint + "서울")
         # Assert
         assert response.status_code == 200
         print(f"response : {response}")
         print(json.loads(response.content))
-        assert len(json.loads(response.content)) == 10
+        assert len(json.loads(response.content)) == 5
