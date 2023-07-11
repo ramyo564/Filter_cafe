@@ -9,7 +9,7 @@ class CityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = City
 
-    name = factory.Sequence(lambda n: "City_%d" % n)
+    name = factory.Iterator(["서울", "인천"])
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -44,7 +44,6 @@ class CafeFactory(factory.django.DjangoModelFactory):
     business_hours = factory.SubFactory(BusinessHoursFactory)
     img = factory.Faker("image_url")
     city = factory.SubFactory(CityFactory)
-    # map = factory.Faker("url")
 
 
 class ReviewFactory(factory.django.DjangoModelFactory):
