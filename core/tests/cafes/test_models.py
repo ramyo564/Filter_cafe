@@ -19,18 +19,29 @@ class TestReviewModel:
         assert x.__str__() == "test_reviews"
 
 
-class TestBusinessHoursModel:
-    def test_str_method(self, business_hours_factory):
+class TestBusinessDaysModel:
+    def test_str_method(self, business_days_factory):
 
-        object = business_hours_factory()
-        expected_string = (
-            "Monday: 09:00 - 23:00\n"
-            "Tuesday: 09:00 - 23:00\n"
-            "Wednesday: 09:00 - 23:00\n"
-            "Thursday: 09:00 - 23:00\n"
-            "Friday: 09:00 - 23:00\n"
-            "Saturday: 09:00 - 23:00\n"
-            "Sunday: 09:00 - 23:00"
-        )
+        time = business_days_factory(day="test_day")
 
-        assert object.__str__() == expected_string
+        assert time.__str__() == "test_day"
+
+
+class TestCafeOptionModel:
+    def test_str_method(self, cafe_option_factory, cafe_factory, option_factory):
+
+        cafe = cafe_factory(name="test_cafe")
+        option = option_factory(name="test_option")
+        cafe_option = cafe_option_factory(cafe=cafe, option=option, point=2)
+
+        assert cafe_option.__str__() == "test_cafe - test_option - 2"
+
+
+class TestCafeBusinessHoursModel:
+    def test_str_method(self, cafe_option_factory, cafe_factory, option_factory):
+
+        cafe = cafe_factory(name="test_cafe")
+        option = option_factory(name="test_option")
+        cafe_option = cafe_option_factory(cafe=cafe, option=option, point=2)
+
+        assert cafe_option.__str__() == "test_cafe - test_option - 2"

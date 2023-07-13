@@ -4,20 +4,24 @@ from rest_framework.test import APIClient
 from .factories import (
     CafeFactory,
     ReviewFactory,
-    BusinessHoursFactory,
+    CafeBusinessHoursFactory,
     CityFactory,
     FilterFactory,
     OptionFactory,
-    UserFactory
+    UserFactory,
+    BusinessDaysFactory,
+    CafeOptionFactory,
 )
 
+register(BusinessDaysFactory)
 register(CafeFactory)
 register(ReviewFactory)
-register(BusinessHoursFactory)
+register(CafeBusinessHoursFactory)
 register(CityFactory)
 register(FilterFactory)
 register(OptionFactory)
 register(UserFactory)
+register(CafeOptionFactory)
 
 
 @pytest.fixture

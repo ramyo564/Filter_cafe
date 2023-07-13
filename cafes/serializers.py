@@ -1,33 +1,22 @@
 from rest_framework import serializers
-from .models import Cafe, Review, BusinessHours
+from .models import Cafe, Review, BusinessDays, CafeBusinessHours, CafeOption
 from filters.serializers import OptionSerializer
 from users.serializers import UserSerializer
 
 
-class CafeSerializer(serializers.ModelSerializer):
+class BusinessDaysSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = BusinessDays
+        fields = "__all__"
 
-    options = serializers.SerializerMethodField()
-    business_hours = serializers.SerializerMethodField()
+
+class CafeSerializer(serializers.ModelSerializer):
+    city_id = serializers.IntegerField(source='city.id', read_only=True)
+    city = serializers.CharField(source='city.name', read_only=True)
 
     class Meta:
         model = Cafe
         fields = "__all__"
-
-    def get_business_hours(self, obj):
-        business_hours = obj.business_hours
-        return {
-            "mon": business_hours.mon,
-            "tue": business_hours.tue,
-            "wed": business_hours.wed,
-            "thu": business_hours.thu,
-            "fri": business_hours.fri,
-            "sat": business_hours.sat,
-            "sun": business_hours.sun,
-        }
-
-    def get_options(self, obj):
-        options = obj.options.all()
-        return OptionSerializer(options, many=True).data
 
 
 class ReviewSerializer(serializers.ModelSerializer):
@@ -40,7 +29,21 @@ class ReviewSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
-class BusinessHoursSerializer(serializers.ModelSerializer):
+class CafeBusinessHoursSerializer(serializers.ModelSerializer):
+
+    cafes = CafeSerializer()
+    BusinessDays = BusinessDaysSerializer()
+
     class Meta:
-        model = BusinessHours
+        model = CafeBusinessHours
+        fields = "__all__"
+
+
+class CafeOptionSerializer(serializers.ModelSerializer):
+
+    cafe = CafeSerializer()
+    option = OptionSerializer()
+
+    class Meta:
+        model = CafeOption
         fields = "__all__"
