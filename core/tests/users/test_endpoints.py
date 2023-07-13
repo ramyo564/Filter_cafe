@@ -14,8 +14,8 @@ class TestUserEndpoints:
         # Act
         response = api_client().get(self.endpoint)
         # Assert
-        print(f"response : {response}")
-        print(json.loads(response.content))
+        # print(f"response : {response}")
+        # print(json.loads(response.content))
         assert response.status_code == 200
 
         assert len(json.loads(response.content)) == 10

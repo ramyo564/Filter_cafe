@@ -26,7 +26,6 @@ from filters import views as filter_views
 router = DefaultRouter()
 router.register(r"cafe", cafe_views.CafeViewSet)
 router.register(r"review", cafe_views.ReviewViewSet)
-router.register(r"businesshours", cafe_views.BusinessHoursViewSet)
 router.register(r"city", filter_views.CityViewSet)
 router.register(r"filter", filter_views.FilterViewSet)
 router.register(r"option", filter_views.OptionViewSet)

@@ -1,5 +1,5 @@
 import factory
-from cafes.models import Cafe, Review, BusinessHours
+from cafes.models import Cafe, Review, BusinessDays, CafeOption, CafeBusinessHours
 from filters.models import City, Filter, Option
 from users.models import User
 
@@ -9,6 +9,8 @@ class CityFactory(factory.django.DjangoModelFactory):
         model = City
 
     name = factory.Sequence(lambda n: "City_%d" % n)
+    map = factory.Faker('url')
+    slug = factory.Sequence(lambda n: "test_slug_%d" % n)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -21,17 +23,29 @@ class UserFactory(factory.django.DjangoModelFactory):
     gender = factory.Iterator(['Male', 'Female'])
 
 
-class BusinessHoursFactory(factory.django.DjangoModelFactory):
+class BusinessDaysFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = BusinessHours
+        model = BusinessDays
 
-    mon = "09:00 - 23:00"
-    tue = "09:00 - 23:00"
-    wed = "09:00 - 23:00"
-    thu = "09:00 - 23:00"
-    fri = "09:00 - 23:00"
-    sat = "09:00 - 23:00"
-    sun = "09:00 - 23:00"
+    day = factory.Sequence(lambda n: "day_%d" % n)
+
+
+class FilterFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Filter
+
+    name = factory.Sequence(lambda n: "Filter_%d" % n)
+    city = factory.SubFactory(CityFactory)
+    slug = factory.Sequence(lambda n: "test_slug_%d" % n)
+
+
+class OptionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Option
+
+    name = factory.Sequence(lambda n: "Option_%d" % n)
+    filter = factory.SubFactory(FilterFactory)
+    slug = factory.Sequence(lambda n: "test_slug_%d" % n)
 
 
 class CafeFactory(factory.django.DjangoModelFactory):
@@ -40,10 +54,20 @@ class CafeFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "Cafe_%d" % n)
     address = factory.Sequence(lambda n: "Address_%d" % n)
-    business_hours = factory.SubFactory(BusinessHoursFactory)
     img = factory.Faker('image_url')
-    map = factory.Faker('url')
     city = factory.SubFactory(CityFactory)
+
+    @factory.post_generation
+    def options(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.options.add(*extracted)
+
+    @factory.post_generation
+    def business_hours(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.business_hours.add(*extracted)
 
 
 class ReviewFactory(factory.django.DjangoModelFactory):
@@ -56,17 +80,21 @@ class ReviewFactory(factory.django.DjangoModelFactory):
     reviews = factory.Faker("text")
 
 
-class FilterFactory(factory.django.DjangoModelFactory):
+class CafeOptionFactory(factory.django.DjangoModelFactory):
+
     class Meta:
-        model = Filter
+        model = CafeOption
 
-    name = factory.Sequence(lambda n: "Filter_%d" % n)
-    city = factory.SubFactory(CityFactory)
+    cafe = factory.SubFactory(CafeFactory)
+    option = factory.SubFactory(OptionFactory)
+    point = factory.Iterator([0, 1, 2])
 
 
-class OptionFactory(factory.django.DjangoModelFactory):
+class CafeBusinessHoursFactory(factory.django.DjangoModelFactory):
+
     class Meta:
-        model = Option
+        model = CafeBusinessHours
 
-    name = factory.Sequence(lambda n: "Option_%d" % n)
-    filter = factory.SubFactory(FilterFactory)
+    cafe = factory.SubFactory(CafeFactory)
+    business_days = factory.SubFactory(BusinessDaysFactory)
+    business_hours = factory.Sequence(lambda n: "hours_%d" % n)
