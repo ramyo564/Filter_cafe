@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
-from .models import Cafe, Review, BusinessDays
-from .serializers import CafeSerializer, ReviewSerializer, BusinessDaysSerializer
+from .models import Cafe, Review
+from .serializers import CafeSerializer, ReviewSerializer
 from rest_framework.decorators import action
 
 
@@ -21,7 +21,7 @@ class CafeViewSet(viewsets.ViewSet):
         methods=["get"],
         detail=False,
         url_path=r"(?P<city_slug>[-\uAC00-\uD7A3\w]+)",
-        url_name="all",
+        url_name="cafes-all",
     )
     def list_cafe_by_city(self, request, city_slug=None):
         '''
@@ -38,9 +38,10 @@ class CafeViewSet(viewsets.ViewSet):
         methods=["get"],
         detail=False,
         url_path=(
-            r"(?P<city_slug>[-\uAC00-\uD7A3\w]+)/(?P<option_slugs>[-\uAC00-\uD7A3\w/]+/?)+"
+            r"(?P<city_slug>[-\uAC00-\uD7A3\w]+)"
+            r"/option/(?P<option_slugs>[-\uAC00-\uD7A3\w/]+/?)+"
         ),
-        url_name="all",
+        url_name="cafes-all_by_city_options",
     )
     def list_cafe_by_city_and_option(self, request, city_slug=None, option_slugs=None):
         '''
@@ -61,6 +62,33 @@ class CafeViewSet(viewsets.ViewSet):
         serializer = CafeSerializer(queryset, many=True)
         return Response(serializer.data)
 
+    @action(
+        methods=["get"],
+        detail=False,
+        url_path=(
+            r"(?P<city_slug>[-\uAC00-\uD7A3\w]+)"
+            r"/cafe/(?P<cafe_slug>[-\uAC00-\uD7A3\w/]+/?)+"
+        ),
+        url_name="cafes-all_by_city_cafe",
+    )
+    def list_cafe_by_city_and_cafe(self, request, city_slug=None, cafe_slug=None):
+        '''
+        An endpoint to return cafes by city slug and cafe slug
+        '''
+        city_slug = [city_slug]
+        cafe_slug = cafe_slug.split("/") if cafe_slug else []
+
+        queryset = self.queryset
+
+        if city_slug:
+            queryset = queryset.filter(city__slug__in=city_slug)
+
+        if cafe_slug:
+            queryset = queryset.filter(slug__in=cafe_slug)
+
+        serializer = CafeSerializer(queryset, many=True)
+        return Response(serializer.data)
+
 
 class ReviewViewSet(viewsets.ViewSet):
     '''
@@ -71,16 +99,4 @@ class ReviewViewSet(viewsets.ViewSet):
     @extend_schema(responses=ReviewSerializer)
     def list(self, request):
         serializer = ReviewSerializer(self.queryset, many=True)
-        return Response(serializer.data)
-
-
-class BusinessDaysViewSet(viewsets.ViewSet):
-    '''
-    A Viewset for viewing all BusinessDays
-    '''
-    queryset = BusinessDays.objects.all()
-
-    @extend_schema(responses=BusinessDaysSerializer)
-    def list(self, request):
-        serializer = BusinessDaysSerializer(self.queryset, many=True)
         return Response(serializer.data)

@@ -1,6 +1,5 @@
 from rest_framework import serializers
 from .models import Cafe, Review, BusinessDays, CafeBusinessHours, CafeOption
-from filters.serializers import OptionSerializer
 from users.serializers import UserSerializer
 
 
@@ -10,9 +9,29 @@ class BusinessDaysSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 
+class CafeOptionSerializer(serializers.ModelSerializer):
+    option = serializers.CharField()
+
+    class Meta:
+        model = CafeOption
+        fields = ('id', 'option', 'point')
+
+
+class CafeBusinessHoursSerializer(serializers.ModelSerializer):
+    business_days = BusinessDaysSerializer()
+
+    class Meta:
+        model = CafeBusinessHours
+        fields = ('business_days', 'business_hours')
+
+
 class CafeSerializer(serializers.ModelSerializer):
     city_id = serializers.IntegerField(source='city.id', read_only=True)
     city = serializers.CharField(source='city.name', read_only=True)
+    options = CafeOptionSerializer(many=True, source='cafe_option_cafe')
+    business_hours = CafeBusinessHoursSerializer(
+        many=True, source='cafe_business_hours_cafe'
+    )
 
     class Meta:
         model = Cafe
@@ -26,24 +45,4 @@ class ReviewSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Review
-        fields = "__all__"
-
-
-class CafeBusinessHoursSerializer(serializers.ModelSerializer):
-
-    cafes = CafeSerializer()
-    BusinessDays = BusinessDaysSerializer()
-
-    class Meta:
-        model = CafeBusinessHours
-        fields = "__all__"
-
-
-class CafeOptionSerializer(serializers.ModelSerializer):
-
-    cafe = CafeSerializer()
-    option = OptionSerializer()
-
-    class Meta:
-        model = CafeOption
         fields = "__all__"
