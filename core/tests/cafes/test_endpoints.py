@@ -31,11 +31,11 @@ class TestCafeEndpoints:
         api_client
     ):
         city_slug = city_factory(slug="test-city-slug")
-        option = cafe_option_factory().option
+        cafe_option = cafe_option_factory().cafe_option
         cafe = cafe_factory(city=city_slug, slug="test-cafe-slug")
-        cafe.options.add(option)
+        cafe.options.add(cafe_option)
         response = api_client().get(
-            f"{self.endpoint}{city_slug.slug}/option/{option.slug}/"
+            f"{self.endpoint}{city_slug.slug}/option/{cafe_option.slug}/"
         )
         assert response.status_code == 200
         assert len(response.json()) == 1

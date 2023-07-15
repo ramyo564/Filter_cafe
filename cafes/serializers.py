@@ -10,11 +10,11 @@ class BusinessDaysSerializer(serializers.ModelSerializer):
 
 
 class CafeOptionSerializer(serializers.ModelSerializer):
-    option = serializers.CharField()
+    option = serializers.CharField(source='cafe_option.name')
 
     class Meta:
         model = CafeOption
-        fields = ('id', 'option', 'point')
+        fields = ('id', 'option', 'rating', 'sum_user', 'sum_rating')
 
 
 class CafeBusinessHoursSerializer(serializers.ModelSerializer):

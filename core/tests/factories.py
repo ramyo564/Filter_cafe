@@ -62,7 +62,7 @@ class CafeFactory(factory.django.DjangoModelFactory):
     def options(self, create, extracted, **kwargs):
         if not create or not extracted:
             return
-        self.options.add(*extracted)
+        self.cafe_option.add(*extracted)
 
     @factory.post_generation
     def business_hours(self, create, extracted, **kwargs):
@@ -71,24 +71,16 @@ class CafeFactory(factory.django.DjangoModelFactory):
         self.business_hours.add(*extracted)
 
 
-class ReviewFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Review
-
-    cafe = factory.SubFactory(CafeFactory)
-    user = factory.SubFactory(UserFactory)
-    rating = factory.Faker("random_int", min=0, max=2)
-    reviews = factory.Faker("text")
-
-
 class CafeOptionFactory(factory.django.DjangoModelFactory):
 
     class Meta:
         model = CafeOption
 
     cafe = factory.SubFactory(CafeFactory)
-    option = factory.SubFactory(OptionFactory)
-    point = factory.Iterator([0, 1, 2])
+    cafe_option = factory.SubFactory(OptionFactory)
+    rating = factory.Faker("random_int", min=0, max=2)
+    sum_user = factory.Faker("random_int", min=1)
+    sum_rating = factory.Faker("random_int", min=0)
 
 
 class CafeBusinessHoursFactory(factory.django.DjangoModelFactory):
@@ -99,3 +91,14 @@ class CafeBusinessHoursFactory(factory.django.DjangoModelFactory):
     cafe = factory.SubFactory(CafeFactory)
     business_days = factory.SubFactory(BusinessDaysFactory)
     business_hours = factory.Sequence(lambda n: "hours_%d" % n)
+
+
+class ReviewFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Review
+
+    cafe = factory.SubFactory(CafeFactory)
+    user = factory.SubFactory(UserFactory)
+    cafe_option = factory.SubFactory(CafeOptionFactory)
+    rating = factory.Faker("random_int", min=0, max=2)
+    reviews = factory.Faker("text")
