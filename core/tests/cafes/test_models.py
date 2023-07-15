@@ -32,9 +32,10 @@ class TestCafeOptionModel:
 
         cafe = cafe_factory(name="test_cafe")
         option = option_factory(name="test_option")
-        cafe_option = cafe_option_factory(cafe=cafe, option=option, point=2)
-
-        assert cafe_option.__str__() == "test_cafe - test_option - 2"
+        result = cafe_option_factory(
+            cafe=cafe, cafe_option=option, rating=1, sum_user=1, sum_rating=2
+        )
+        assert str(result) == "test_cafe - test_option - total user: 1\n- total rating: 2"
 
 
 class TestCafeBusinessHoursModel:
@@ -42,6 +43,8 @@ class TestCafeBusinessHoursModel:
 
         cafe = cafe_factory(name="test_cafe")
         option = option_factory(name="test_option")
-        cafe_option = cafe_option_factory(cafe=cafe, option=option, point=2)
+        result = cafe_option_factory(
+            cafe=cafe, cafe_option=option, rating=1, sum_user=1, sum_rating=2
+        )
 
-        assert cafe_option.__str__() == "test_cafe - test_option - 2"
+        assert str(result) == "test_cafe - test_option - total user: 1\n- total rating: 2"

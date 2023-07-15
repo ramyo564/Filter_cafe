@@ -17,8 +17,8 @@ class City(models.Model):
 
 class Filter(models.Model):
     name = models.CharField(max_length=50)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
     slug = models.SlugField(max_length=255, allow_unicode=True)
+    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
@@ -26,8 +26,8 @@ class Filter(models.Model):
 
 class Option(models.Model):
     name = models.CharField(max_length=50)
-    filter = models.ForeignKey("Filter", on_delete=models.CASCADE)
     slug = models.SlugField(max_length=255, allow_unicode=True)
+    filter = models.ForeignKey("Filter", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name
