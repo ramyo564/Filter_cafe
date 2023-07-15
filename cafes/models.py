@@ -40,7 +40,7 @@ class Review(models.Model):
     user = models.ForeignKey("users.User", on_delete=models.CASCADE)
     cafe_option = models.ForeignKey("CafeOption", on_delete=models.CASCADE)
     rating = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(2)]
+        validators=[MinValueValidator(0), MaxValueValidator(10)]
     )
     reviews = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -69,7 +69,7 @@ class CafeOption(models.Model):
         related_name="cafe_option_option"
     )
     rating = models.PositiveIntegerField(
-        validators=[MinValueValidator(0), MaxValueValidator(2)],
+        validators=[MinValueValidator(0), MaxValueValidator(10)],
         default=2
     )
     sum_user = models.PositiveIntegerField(
