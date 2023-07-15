@@ -56,6 +56,7 @@ class CafeFactory(factory.django.DjangoModelFactory):
     address = factory.Sequence(lambda n: "Address_%d" % n)
     img = factory.Faker('image_url')
     city = factory.SubFactory(CityFactory)
+    slug = factory.Sequence(lambda n: f"cafe-{n}")
 
     @factory.post_generation
     def options(self, create, extracted, **kwargs):

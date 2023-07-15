@@ -16,6 +16,7 @@ class CafeBusinessHoursInline(admin.TabularInline):
 @admin.register(Cafe)
 class CafeAdmin(admin.ModelAdmin):
     inlines = [CafeOptionInline, CafeBusinessHoursInline]
+    prepopulated_fields = {"slug": ("name",)}
 
 
 admin.site.register(Review)

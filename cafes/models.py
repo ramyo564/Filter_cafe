@@ -17,6 +17,7 @@ class BusinessDays(models.Model):
 class Cafe(models.Model):
     city = models.ForeignKey(City, on_delete=models.CASCADE)
     name = models.CharField(max_length=20)
+    slug = models.SlugField(max_length=255, allow_unicode=True)
     address = models.CharField(max_length=100)
     business_hours = models.ManyToManyField(
         BusinessDays,
