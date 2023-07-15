@@ -21,6 +21,7 @@ class UserFactory(factory.django.DjangoModelFactory):
     name = factory.Sequence(lambda n: "User_%d" % n)
     age = factory.Faker("random_int", min=1, max=100)
     gender = factory.Iterator(['Male', 'Female'])
+    email = factory.LazyAttribute(lambda obj: "%s@example.com" % obj.username)
 
 
 class BusinessDaysFactory(factory.django.DjangoModelFactory):
