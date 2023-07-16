@@ -11,14 +11,6 @@ class TestCafeModel:
         assert x.__str__() == "test_category"
 
 
-class TestReviewModel:
-    def test_str_method(self, review_factory):
-
-        x = review_factory(reviews="test_reviews")
-
-        assert x.__str__() == "test_reviews"
-
-
 class TestBusinessDaysModel:
     def test_str_method(self, business_days_factory):
 
@@ -48,3 +40,15 @@ class TestCafeBusinessHoursModel:
         )
 
         assert str(result) == "test_cafe - test_option - total user: 1\n- total rating: 2"
+
+
+class TestCafeReviewsModel:
+    def test_str_method(self, cafe_factory, user_factory, cafe_reviews_factory):
+
+        cafe = cafe_factory(name="test_cafe")
+        user = user_factory(name="test_user")
+        result = cafe_reviews_factory(
+            cafe=cafe, user=user, cafe_reviews="test_cafe_reviews"
+        )
+
+        assert str(result) == "test_cafe - test_user - test_cafe_reviews"

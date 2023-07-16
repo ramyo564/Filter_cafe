@@ -12,14 +12,13 @@ class CityAdmin(admin.ModelAdmin):
 
 class FilterAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
-    list_display = ("name", "city", "slug")
-    ordering = ("city",)
+    list_display = ("name", "slug")
 
 
 class OptionAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
     list_display = ("name", "filter", "slug")
-    ordering = ("filter__city",)
+    ordering = ("filter",)
 
 
 admin.site.register(City, CityAdmin)

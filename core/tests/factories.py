@@ -1,7 +1,7 @@
 import factory
-from cafes.models import Cafe, Review, BusinessDays, CafeOption, CafeBusinessHours
+from cafes.models import Cafe, BusinessDays, CafeOption, CafeBusinessHours, CafeReviews
 from filters.models import City, Filter, Option
-from users.models import User
+from users.models import User, UserRating
 
 
 class CityFactory(factory.django.DjangoModelFactory):
@@ -36,7 +36,6 @@ class FilterFactory(factory.django.DjangoModelFactory):
         model = Filter
 
     name = factory.Sequence(lambda n: "Filter_%d" % n)
-    city = factory.SubFactory(CityFactory)
     slug = factory.Sequence(lambda n: "test_slug_%d" % n)
 
 
@@ -71,6 +70,12 @@ class CafeFactory(factory.django.DjangoModelFactory):
             return
         self.business_hours.add(*extracted)
 
+    @factory.post_generation
+    def cafe_reviews(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.business_hours.add(*extracted)
+
 
 class CafeOptionFactory(factory.django.DjangoModelFactory):
 
@@ -94,12 +99,21 @@ class CafeBusinessHoursFactory(factory.django.DjangoModelFactory):
     business_hours = factory.Sequence(lambda n: "hours_%d" % n)
 
 
-class ReviewFactory(factory.django.DjangoModelFactory):
+class UserRatingFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = Review
+        model = UserRating
 
     cafe = factory.SubFactory(CafeFactory)
     user = factory.SubFactory(UserFactory)
     cafe_option = factory.SubFactory(CafeOptionFactory)
-    rating = factory.Faker("random_int", min=0, max=2)
-    reviews = factory.Faker("text")
+    rating = factory.Faker("random_int", min=0, max=10)
+
+
+class CafeReviewsFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = CafeReviews
+
+    cafe = factory.SubFactory(CafeFactory)
+    user = factory.SubFactory(UserFactory)
+    cafe_reviews = factory.Sequence(lambda n: "CafeReview_%d" % n)

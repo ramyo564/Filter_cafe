@@ -7,7 +7,7 @@ from .serializers import UserSerializer
 
 class UserViewSet(viewsets.ViewSet):
     '''
-    A Viewset for viewing all Cities
+    A Viewset for viewing all Users
     '''
     queryset = User.objects.all()
 

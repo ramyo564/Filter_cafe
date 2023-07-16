@@ -1,4 +1,3 @@
-import json
 import pytest
 
 
@@ -53,17 +52,3 @@ class TestCafeEndpoints:
         )
         assert response.status_code == 200
         assert len(response.json()) == 1
-
-
-class TestReviewEndpoints:
-
-    endpoint = "/api/review/"
-
-    def test_return_all_reviews(self, review_factory, api_client):
-        # Arrange
-        review_factory.create_batch(10)
-        # Act
-        response = api_client().get(self.endpoint)
-        # Assert
-        assert response.status_code == 200
-        assert len(json.loads(response.content)) == 10

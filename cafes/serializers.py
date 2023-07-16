@@ -1,6 +1,5 @@
 from rest_framework import serializers
-from .models import Cafe, Review, BusinessDays, CafeBusinessHours, CafeOption
-from users.serializers import UserSerializer
+from .models import Cafe, BusinessDays, CafeBusinessHours, CafeOption, CafeReviews
 
 
 class BusinessDaysSerializer(serializers.ModelSerializer):
@@ -25,6 +24,14 @@ class CafeBusinessHoursSerializer(serializers.ModelSerializer):
         fields = ('business_days', 'business_hours')
 
 
+class CafeReviewsSerializer(serializers.ModelSerializer):
+    user = serializers.CharField(source='user.username')
+
+    class Meta:
+        model = CafeReviews
+        fields = "__all__"
+
+
 class CafeSerializer(serializers.ModelSerializer):
     city_id = serializers.IntegerField(source='city.id', read_only=True)
     city = serializers.CharField(source='city.name', read_only=True)
@@ -32,17 +39,8 @@ class CafeSerializer(serializers.ModelSerializer):
     business_hours = CafeBusinessHoursSerializer(
         many=True, source='cafe_business_hours_cafe'
     )
+    cafe_reviews = CafeReviewsSerializer(many=True, source='cafe_reviews_cafe')
 
     class Meta:
         model = Cafe
-        fields = "__all__"
-
-
-class ReviewSerializer(serializers.ModelSerializer):
-
-    user = UserSerializer()
-    cafe = CafeSerializer()
-
-    class Meta:
-        model = Review
         fields = "__all__"

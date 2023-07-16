@@ -18,7 +18,6 @@ class City(models.Model):
 class Filter(models.Model):
     name = models.CharField(max_length=50)
     slug = models.SlugField(max_length=255, allow_unicode=True)
-    city = models.ForeignKey(City, on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

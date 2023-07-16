@@ -11,8 +11,6 @@ class CitySerializer(serializers.ModelSerializer):
 
 class FilterSerializer(serializers.ModelSerializer):
 
-    city = CitySerializer()
-
     class Meta:
         model = Filter
         fields = "__all__"

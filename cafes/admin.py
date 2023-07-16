@@ -1,6 +1,6 @@
 from django.contrib import admin
 
-from .models import Cafe, Review, BusinessDays, CafeBusinessHours, CafeOption
+from .models import Cafe, BusinessDays, CafeBusinessHours, CafeOption, CafeReviews
 
 # Register your models here.
 
@@ -13,11 +13,14 @@ class CafeBusinessHoursInline(admin.TabularInline):
     model = CafeBusinessHours
 
 
+class CafeReviewsInline(admin.TabularInline):
+    model = CafeReviews
+
+
 @admin.register(Cafe)
 class CafeAdmin(admin.ModelAdmin):
-    inlines = [CafeOptionInline, CafeBusinessHoursInline]
+    inlines = [CafeOptionInline, CafeBusinessHoursInline, CafeReviewsInline]
     prepopulated_fields = {"slug": ("name",)}
 
 
-admin.site.register(Review)
 admin.site.register(BusinessDays)
