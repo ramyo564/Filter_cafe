@@ -1,6 +1,6 @@
 from django.contrib.auth.models import AbstractUser
-from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
+from django.db import models
 
 
 class User(AbstractUser):
@@ -23,12 +23,30 @@ class UserRating(models.Model):
         validators=[MinValueValidator(0), MaxValueValidator(10)]
     )
 
+    class Meta:
+        unique_together = (("cafe", "user", "cafe_option"),)
+
     def __str__(self):
         return f"{self.cafe_option} - {self.rating}"
 
     def save(self, *args, **kwargs):
+
+        before_my_rating = UserRating.objects.filter(
+            cafe_option=self.cafe_option).values_list(
+                "rating", flat=True
+        )
+        before_my_rating = before_my_rating.first() if before_my_rating else None
+        print(before_my_rating)
+
+        created = not self.pk
         super().save(*args, **kwargs)
-        self.cafe_option.sum_rating += int(self.rating)
-        self.cafe_option.sum_user += 1  # sum_user에 1 추가
+
+        if created:
+            self.cafe_option.sum_rating += int(self.rating)
+            self.cafe_option.sum_user += 1
+        else:
+            self.cafe_option.sum_rating -= before_my_rating
+            self.cafe_option.sum_rating += int(self.rating)
+
         self.cafe_option.total_rating()  # 업데이트된 값을 기반으로 total_rating 호출
         self.cafe_option.save()  # CafeOption 모델 저장

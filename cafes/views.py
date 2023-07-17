@@ -1,8 +1,8 @@
 from rest_framework import viewsets
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema
-from .models import Cafe
-from .serializers import CafeSerializer
+from .models import Cafe, CafeReviews
+from .serializers import CafeSerializer, CafeReviewsSerializer
 from rest_framework.decorators import action
 
 
@@ -90,40 +90,6 @@ class CafeViewSet(viewsets.ViewSet):
         return Response(serializer.data)
 
 
-# class ReviewViewSet(viewsets.ViewSet):
-#     '''
-#     A Viewset for viewing all Reviews
-#     '''
-#     queryset = Review.objects.all()
-
-#     @extend_schema(responses=ReviewSerializer)
-#     def list(self, request):
-#         serializer = ReviewSerializer(self.queryset, many=True)
-#         return Response(serializer.data)
-
-#     @action(
-#         methods=["get"],
-#         detail=False,
-#         url_path=(
-#             r"(?P<city_slug>[-\uAC00-\uD7A3\w]+)"
-#             r"/cafe/(?P<cafe_slug>[-\uAC00-\uD7A3\w/]+/?)+"
-#         ),
-#         url_name="reviews-all_by_cafe",
-#     )
-#     def list_cafe_by_city_and_cafe(self, request, city_slug=None, cafe_slug=None):
-#         '''
-#         An endpoint to return cafes by city slug and cafe slug
-#         '''
-#         city_slug = [city_slug]
-#         cafe_slug = cafe_slug.split("/") if cafe_slug else []
-
-#         queryset = self.queryset
-
-#         if city_slug:
-#             queryset = queryset.filter(city__slug__in=city_slug)
-
-#         if cafe_slug:
-#             queryset = queryset.filter(slug__in=cafe_slug)
-
-#         serializer = CafeSerializer(queryset, many=True)
-#         return Response(serializer.data)
+class CafeReviewsViewSet(viewsets.ModelViewSet):
+    queryset = CafeReviews.objects.all()
+    serializer_class = CafeReviewsSerializer
