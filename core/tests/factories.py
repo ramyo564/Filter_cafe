@@ -1,15 +1,16 @@
 import factory
-
-from cafes.models import BusinessHours, Cafe, Review
+from cafes.models import Cafe, BusinessDays, CafeOption, CafeBusinessHours, CafeReviews
 from filters.models import City, Filter, Option
-from users.models import User
+from users.models import User, UserRating
 
 
 class CityFactory(factory.django.DjangoModelFactory):
     class Meta:
         model = City
 
-    name = factory.Iterator(["서울", "인천"])
+    name = factory.Sequence(lambda n: "City_%d" % n)
+    map = factory.Faker('url')
+    slug = factory.Sequence(lambda n: "test_slug_%d" % n)
 
 
 class UserFactory(factory.django.DjangoModelFactory):
@@ -19,20 +20,32 @@ class UserFactory(factory.django.DjangoModelFactory):
     username = factory.Sequence(lambda n: "username_%d" % n)
     name = factory.Sequence(lambda n: "User_%d" % n)
     age = factory.Faker("random_int", min=1, max=100)
-    gender = factory.Iterator(["Male", "Female"])
+    gender = factory.Iterator(['Male', 'Female'])
+    email = factory.LazyAttribute(lambda obj: "%s@example.com" % obj.username)
 
 
-class BusinessHoursFactory(factory.django.DjangoModelFactory):
+class BusinessDaysFactory(factory.django.DjangoModelFactory):
     class Meta:
-        model = BusinessHours
+        model = BusinessDays
 
-    mon = "09:00 - 23:00"
-    tue = "09:00 - 23:00"
-    wed = "09:00 - 23:00"
-    thu = "09:00 - 23:00"
-    fri = "09:00 - 23:00"
-    sat = "09:00 - 23:00"
-    sun = "09:00 - 23:00"
+    day = factory.Sequence(lambda n: "day_%d" % n)
+
+
+class FilterFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Filter
+
+    name = factory.Sequence(lambda n: "Filter_%d" % n)
+    slug = factory.Sequence(lambda n: "test_slug_%d" % n)
+
+
+class OptionFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = Option
+
+    name = factory.Sequence(lambda n: "Option_%d" % n)
+    filter = factory.SubFactory(FilterFactory)
+    slug = factory.Sequence(lambda n: "test_slug_%d" % n)
 
 
 class CafeFactory(factory.django.DjangoModelFactory):
@@ -41,31 +54,66 @@ class CafeFactory(factory.django.DjangoModelFactory):
 
     name = factory.Sequence(lambda n: "Cafe_%d" % n)
     address = factory.Sequence(lambda n: "Address_%d" % n)
-    business_hours = factory.SubFactory(BusinessHoursFactory)
-    img = factory.Faker("image_url")
+    img = factory.Faker('image_url')
     city = factory.SubFactory(CityFactory)
+    slug = factory.Sequence(lambda n: f"cafe-{n}")
+
+    @factory.post_generation
+    def options(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.cafe_option.add(*extracted)
+
+    @factory.post_generation
+    def business_hours(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.business_hours.add(*extracted)
+
+    @factory.post_generation
+    def cafe_reviews(self, create, extracted, **kwargs):
+        if not create or not extracted:
+            return
+        self.business_hours.add(*extracted)
 
 
-class ReviewFactory(factory.django.DjangoModelFactory):
+class CafeOptionFactory(factory.django.DjangoModelFactory):
+
     class Meta:
-        model = Review
+        model = CafeOption
+
+    cafe = factory.SubFactory(CafeFactory)
+    cafe_option = factory.SubFactory(OptionFactory)
+    rating = factory.Faker("random_int", min=0, max=2)
+    sum_user = factory.Faker("random_int", min=1)
+    sum_rating = factory.Faker("random_int", min=0)
+
+
+class CafeBusinessHoursFactory(factory.django.DjangoModelFactory):
+
+    class Meta:
+        model = CafeBusinessHours
+
+    cafe = factory.SubFactory(CafeFactory)
+    business_days = factory.SubFactory(BusinessDaysFactory)
+    business_hours = factory.Sequence(lambda n: "hours_%d" % n)
+
+
+class UserRatingFactory(factory.django.DjangoModelFactory):
+    class Meta:
+        model = UserRating
 
     cafe = factory.SubFactory(CafeFactory)
     user = factory.SubFactory(UserFactory)
-    rating = factory.Faker("random_int", min=0, max=2)
-    content = factory.Faker("text")
+    cafe_option = factory.SubFactory(CafeOptionFactory)
+    rating = factory.Faker("random_int", min=0, max=10)
 
 
-class OptionFactory(factory.django.DjangoModelFactory):
+class CafeReviewsFactory(factory.django.DjangoModelFactory):
+
     class Meta:
-        model = Option
+        model = CafeReviews
 
-    name = factory.Sequence(lambda n: "Option_%d" % n)
-
-
-class FilterFactory(factory.django.DjangoModelFactory):
-    class Meta:
-        model = Filter
-
-    name = factory.Sequence(lambda n: "Filter_%d" % n)
-    option = factory.SubFactory(OptionFactory)
+    cafe = factory.SubFactory(CafeFactory)
+    user = factory.SubFactory(UserFactory)
+    cafe_reviews = factory.Sequence(lambda n: "CafeReview_%d" % n)

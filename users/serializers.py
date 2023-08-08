@@ -1,15 +1,21 @@
-from rest_framework.serializers import ModelSerializer
+from rest_framework import serializers
+from .models import User, UserRating
+from cafes.serializers import CafeSerializer, CafeOptionSerializer
 
-from .models import User
 
+class UserSerializer(serializers.ModelSerializer):
 
-class UserSerializer(ModelSerializer):
     class Meta:
         model = User
-        fields = (
-            "pk",
-            "username",
-            "name",
-            "age",
-            "gender",
-        )
+        fields = "__all__"
+
+
+class UserRatingSerializer(serializers.ModelSerializer):
+
+    user = UserSerializer()
+    cafe = CafeSerializer()
+    cafe_option = CafeOptionSerializer()
+
+    class Meta:
+        model = UserRating
+        fields = "__all__"

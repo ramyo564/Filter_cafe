@@ -2,18 +2,23 @@ from django.core.validators import MaxValueValidator
 from django.db import models
 
 
+# Create your models here.
+class City(models.Model):
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=255, allow_unicode=True)
+    map = models.URLField(max_length=200)
+
+    class Meta:
+        verbose_name = "city"
+        verbose_name_plural = "cities"
+
+    def __str__(self):
+        return self.name
+
+
 class Filter(models.Model):
-    option = models.ForeignKey(
-        "Option",
-        on_delete=models.CASCADE,
-        null=True,
-        blank=True,
-    )
-    name = models.CharField(
-        max_length=50,
-        unique=True,
-    )
-    # is_active = models.BooleanField(default=True)
+    name = models.CharField(max_length=50)
+    slug = models.SlugField(max_length=255, allow_unicode=True)
 
     def __str__(self):
         return self.name
@@ -21,45 +26,8 @@ class Filter(models.Model):
 
 class Option(models.Model):
     name = models.CharField(max_length=50)
-
-    def __str__(self):
-        return self.name
-
-
-class FilterScore(models.Model):
-    score = models.PositiveIntegerField(
-        unique=True,
-        validators=[MaxValueValidator(100)],
-    )
-
-
-class BallotBox(models.Model):
-    cafe = models.ForeignKey(
-        "cafes.Cafe",
-        on_delete=models.CASCADE,
-        related_name="ballot_boxs",
-    )
-    filter = models.ForeignKey(
-        "filters.Filter",
-        on_delete=models.CASCADE,
-        related_name="ballot_boxs",
-    )
-    score = models.ForeignKey(
-        "filters.FilterScore",
-        on_delete=models.CASCADE,
-        related_name="ballot_boxs",
-    )
-    users = models.ManyToManyField(
-        "users.User",
-        related_name="ballot_boxs",
-        blank=True,
-        null=True,
-    )
-
-
-class City(models.Model):
-    name = models.CharField(max_length=50)
-    # slug = models.SlugField(max_length=255)
+    slug = models.SlugField(max_length=255, allow_unicode=True)
+    filter = models.ForeignKey("Filter", on_delete=models.CASCADE)
 
     def __str__(self):
         return self.name

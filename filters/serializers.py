@@ -1,43 +1,25 @@
-from rest_framework.serializers import ModelSerializer
-
-from cafes.models import Cafe, Review
-from filters.models import BallotBox, City, Filter, FilterScore
-from users.models import User
+from rest_framework import serializers
+from .models import City, Filter, Option
 
 
-class BallotBoxSerializer(ModelSerializer):
-    class Meta:
-        model = BallotBox
-        fields = (
-            "pk",
-            "cafe",
-            "filter",
-            "score",
-        )
+class CitySerializer(serializers.ModelSerializer):
 
-
-class FilterSerializer(ModelSerializer):
-    class Meta:
-        model = Filter
-        fields = (
-            "pk",
-            "name",
-        )
-
-
-class FilterScoreSerializer(ModelSerializer):
-    class Meta:
-        model = FilterScore
-        fields = (
-            "pk",
-            "score",
-        )
-
-
-class CitySerializer(ModelSerializer):
     class Meta:
         model = City
-        fields = (
-            "pk",
-            "name",
-        )
+        fields = "__all__"
+
+
+class FilterSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Filter
+        fields = "__all__"
+
+
+class OptionSerializer(serializers.ModelSerializer):
+
+    filter = FilterSerializer()
+
+    class Meta:
+        model = Option
+        fields = "__all__"

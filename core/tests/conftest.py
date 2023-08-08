@@ -1,24 +1,29 @@
 import pytest
 from pytest_factoryboy import register
 from rest_framework.test import APIClient
-
 from .factories import (
-    BusinessHoursFactory,
     CafeFactory,
+    UserRatingFactory,
+    CafeBusinessHoursFactory,
+    CafeReviewsFactory,
     CityFactory,
     FilterFactory,
     OptionFactory,
-    ReviewFactory,
     UserFactory,
+    BusinessDaysFactory,
+    CafeOptionFactory,
 )
 
+register(BusinessDaysFactory)
 register(CafeFactory)
-register(ReviewFactory)
-register(BusinessHoursFactory)
+register(UserRatingFactory)
+register(CafeBusinessHoursFactory)
 register(CityFactory)
 register(FilterFactory)
 register(OptionFactory)
 register(UserFactory)
+register(CafeOptionFactory)
+register(CafeReviewsFactory)
 
 
 @pytest.fixture
